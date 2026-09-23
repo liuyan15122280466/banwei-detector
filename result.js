@@ -2,30 +2,44 @@
 (function () {
   var DIMS = ['摸鱼浓度', '背锅指数', '发疯值', '内耗值', '搞钱欲', '恋爱脑'];
 
-  /* ---------- 读取答案 ---------- */
+  /* ---------- 读取本场答题数据 ---------- */
   var answers = [];
-  try { answers = JSON.parse(sessionStorage.getItem('bw_answers') || '[]'); } catch (e) {}
+  var quiz = [];
+  try {
+    answers = JSON.parse(sessionStorage.getItem('bw_answers') || '[]');
+    quiz = JSON.parse(sessionStorage.getItem('bw_quiz') || '[]');
+  } catch (e) {}
   if (!Array.isArray(answers) || answers.length === 0) {
     /* 没有答题记录：生成一份演示数据，保证页面可直接访问不空白 */
-    answers = QUESTIONS_DEMO();
+    for (var di = 0; di < 20; di++) answers.push({ text: 'demo', s: [5, 5, 5, 5, 5, 5] });
+  }
+  if (!Array.isArray(quiz) || quiz.length !== answers.length) {
+    /* 兜底：拿不到本场题目时按顺序取题库（仅影响极值计算精度） */
+    quiz = (window.QUESTIONS || []).slice(0, answers.length);
   }
 
-  function QUESTIONS_DEMO() {
-    var arr = [];
-    for (var i = 0; i < 20; i++) arr.push({ text: 'demo', s: [5, 5, 5, 5, 5, 5] });
-    return arr;
-  }
-
-  /* ---------- 统计六维得分（0-100） ---------- */
+  /* ---------- 统计六维原始分（百分制） ---------- */
+  var n = answers.length;
   var sum = [0, 0, 0, 0, 0, 0];
   answers.forEach(function (a) {
     if (!a || !a.s) return;
     for (var i = 0; i < 6; i++) sum[i] += (a.s[i] || 0);
   });
-  var maxRaw = answers.length * 10;
-  var score = sum.map(function (v) {
-    return Math.round(v / maxRaw * 100);
+  var score = sum.map(function (v, i) {
+    var cap = n * 10;
+    return Math.max(2, Math.min(100, Math.round(v / cap * 100)));
   });
+
+  var moyu = score[0], beiguo = score[1], fafeng = score[2], neihao = score[3], gaoqian = score[4], lianai = score[5];
+
+  /* ---------- 班味指数：相对分映射 ----------
+     以全题库“最躺选项组合”与“最丧选项组合”的加权分为基准，
+     把用户得分线性映射到 15~92，保证五种人格称号都真实可达 */
+  var W = [0.26, 0.16, 0.18, 0.22, 0.12, 0.06];
+  var LIGHT_BASE = 43, HEAVY_BASE = 54; /* 全题库最躺/最丧组合的加权基准分 */
+  var weighted = moyu * W[0] + beiguo * W[1] + fafeng * W[2] + neihao * W[3] + gaoqian * W[4] + lianai * W[5];
+  var t = (weighted - LIGHT_BASE) / (HEAVY_BASE - LIGHT_BASE);
+  var banwei = Math.max(5, Math.min(98, Math.round(15 + t * 77)));
 
   /* ---------- 昵称 ---------- */
   var NICKS = ['无名打工狗', '工位钉子户', '带薪困倦选手', '咖啡因战士', '摸鱼预备党员', '键盘侠本侠', '会议室幽灵', '周报文学家'];
@@ -57,8 +71,6 @@
     return '已到账';
   }
 
-  var moyu = score[0], beiguo = score[1], fafeng = score[2], neihao = score[3], gaoqian = score[4], lianai = score[5];
-
   function setStat(id, barId, val, barPct) {
     document.getElementById(id).textContent = val;
     var bar = document.getElementById(barId);
@@ -71,13 +83,22 @@
 
   /* ---------- 判定词 ---------- */
   var verdict;
-  var banwei = Math.round((moyu * 0.9 + beiguo * 0.8 + fafeng + neihao * 1.1 + (100 - gaoqian) * 0.2) / 4);
   if (banwei >= 80) verdict = '班味浓度：爆表级 ☢️';
   else if (banwei >= 60) verdict = '班味浓度：重度超标';
   else if (banwei >= 40) verdict = '班味浓度：中度感染';
   else if (banwei >= 20) verdict = '班味浓度：轻度携带';
   else verdict = '班味浓度：几乎没味？';
   document.getElementById('verdictChip').textContent = verdict;
+
+  /* ---------- 人格称号（主判定，可分享） ---------- */
+  var PERSONAS = [
+    { min: 80, name: '班味核弹', sub: 'BANWEI NUCLEAR', quote: '你不是在上班，你是长在了公司。建议把工牌换成胸卡：危。' },
+    { min: 60, name: '资深社畜', sub: 'SENIOR CORPO-RAT', quote: '班味已经焊死在你身上，洗澡只能洗掉表层，深层要用年假。' },
+    { min: 40, name: '半糖打工人', sub: 'HALF-SUGAR WORKER', quote: '一半是班味，一半是人味。摸鱼时愧疚，上班时想逃，很真实了。' },
+    { min: 20, name: '松弛幸存者', sub: 'CHILL SURVIVOR', quote: '班味只是路过你，没能住下。你守住了下班后的自己，很了不起。' },
+    { min: 0, name: '人间清醒', sub: 'SOBER LEGEND', quote: '班味检测仪在你面前集体失灵。请问贵司还招人吗？在线等。' }
+  ];
+  var persona = PERSONAS.find(function (p) { return banwei >= p.min; }) || PERSONAS[PERSONAS.length - 1];
 
   /* ---------- 毒舌点评 ---------- */
   var comment;
@@ -305,15 +326,38 @@
   var warmPng = null;
   svgToPngUrl('assets/result.svg').then(function (u) { warmPng = u; }).catch(function () {});
 
-  /* 只填重点结论：判定词 + 两项核心数据 + 主标签 */
+  /* 海报内容：判定 + 称号 + 金句 + 数据 + 标签 + 二维码 */
   function fillSharePoster(pngUrl) {
     document.getElementById('spNo').textContent = no;
     document.getElementById('spVerdict').textContent = verdict;
+    document.getElementById('spTitle').textContent = persona.name;
+    document.getElementById('spTitleSub').textContent = persona.sub;
+    document.getElementById('spQuote').textContent = persona.quote;
     document.getElementById('spMoyu').textContent = pctText(moyu);
     document.getElementById('spFafeng').textContent = fafengText(fafeng);
     document.getElementById('spTagName').textContent = gotTags[0];
     document.getElementById('spTagDesc').textContent = TAG_DESC[gotTags[0]] || '';
     document.getElementById('spImg').src = pngUrl;
+  }
+
+  /* 二维码：优先本地库（直接读 canvas，同步可靠），失败时降级为在线服务 */
+  function qrSrc() {
+    var url = 'https://liuyan15122280466.github.io/banwei-detector/';
+    if (window.QRCode) {
+      try {
+        var c = document.createElement('div');
+        new QRCode(c, { text: url, width: 108, height: 108, correctLevel: QRCode.CorrectLevel.M });
+        var canvasEl = c.querySelector('canvas');
+        if (canvasEl && canvasEl.width > 0) {
+          return canvasEl.toDataURL('image/png');
+        }
+        var img = c.querySelector('img');
+        if (img && img.src && img.src.indexOf('data:') === 0) {
+          return img.src;
+        }
+      } catch (e) {}
+    }
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=108x108&data=' + encodeURIComponent(url);
   }
 
   shareBtn.addEventListener('click', function () {
@@ -330,6 +374,11 @@
     prep
       .then(function (pngUrl) {
         fillSharePoster(pngUrl);
+        var el = document.getElementById('spQrImg');
+        el.src = qrSrc();
+        return waitImgReady(el);
+      })
+      .then(function () {
         return waitImgReady(document.getElementById('spImg'));
       })
       .then(function () {

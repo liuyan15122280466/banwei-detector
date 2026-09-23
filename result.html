@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>班味浓度报告 · 班味检测仪</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body class="page-result">
 
@@ -86,6 +86,13 @@
     <img src="assets/result.svg" alt="" class="sp-img" id="spImg" draggable="false">
   </figure>
 
+  <div class="sp-title">
+    <span id="spTitle">检测中</span>
+    <span class="sp-title-sub" id="spTitleSub">BANWEI REPORT</span>
+  </div>
+
+  <div class="sp-quote" id="spQuote">金句生成中…</div>
+
   <div class="sp-stats">
     <div class="sp-stat">
       <span class="sp-stat-name">摸鱼浓度</span>
@@ -103,7 +110,13 @@
   </div>
 
   <footer class="sp-foot">
-    <span>班味检测仪 BANWEI LAB</span>
+    <div class="sp-qr">
+      <img id="spQrImg" alt="扫码测班味">
+      <div class="sp-qr-text">
+        <b>扫码测测你的班味</b>
+        <span>BANWEI LAB · 打工狗鉴定中心</span>
+      </div>
+    </div>
     <span class="sp-foot-dog">🐶 汪的都懂</span>
   </footer>
 </div>
@@ -125,6 +138,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="result.js?v=3"></script>
+<script src="assets/qrcode.min.js"></script>
+<script src="result.js?v=5"></script>
 </body>
 </html>

@@ -1,11 +1,20 @@
 /* 班味检测仪 - 答题逻辑 */
 (function () {
-  var total = QUESTIONS.length;
+  var TOTAL = 20;
+  /* 每次开测从题库随机抽 20 题，重测体验不重复 */
+  var QUESTIONS_PICKED = (function () {
+    try {
+      var pool = QUESTIONS.slice();
+      for (var i = pool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+      }
+      return pool.slice(0, Math.min(TOTAL, pool.length));
+    } catch (e) { return QUESTIONS.slice(0, TOTAL); }
+  })();
+  var total = QUESTIONS_PICKED.length;
   var idx = 0;
   var answers = [];
-  try { answers = JSON.parse(sessionStorage.getItem('bw_answers') || '[]'); } catch (e) { answers = []; }
-  if (!Array.isArray(answers)) answers = [];
-  if (answers.length > total) answers = answers.slice(0, total);
 
   var elNow = document.getElementById('qNow');
   var elTitle = document.getElementById('qTitle');
@@ -16,6 +25,7 @@
   var elBatteryText = document.getElementById('batteryText');
   var btnPrev = document.getElementById('btnPrev');
   var qCard = document.getElementById('qCard');
+  var elTotal = document.querySelector('.quiz-count span');
 
   /* 生成底部圆点导航 */
   for (var d = 0; d < total; d++) {
@@ -49,8 +59,9 @@
   }
 
   function render() {
-    var q = QUESTIONS[idx];
+    var q = QUESTIONS_PICKED[idx];
     elNow.textContent = idx + 1;
+    if (elTotal) elTotal.textContent = '/' + total;
     elScene.textContent = q.scene;
     elTitle.textContent = q.title;
     elOptions.innerHTML = '';
@@ -65,8 +76,7 @@
     });
     /* 恢复已选状态 */
     if (answers[idx] != null) {
-      var q2 = QUESTIONS[idx];
-      var savedIdx = q2.options.findIndex(function (o) { return o.text === answers[idx].text; });
+      var savedIdx = q.options.findIndex(function (o) { return o.text === answers[idx].text; });
       if (savedIdx > -1) elOptions.children[savedIdx].classList.add('picked');
     }
     btnPrev.classList.toggle('disabled', idx === 0);
@@ -82,7 +92,6 @@
     if (btn.classList.contains('picked')) return;
     btn.classList.add('picked');
     answers[idx] = { text: opt.text, s: opt.s };
-    try { sessionStorage.setItem('bw_answers', JSON.stringify(answers)); } catch (e) {}
     setTimeout(function () {
       if (idx < total - 1) { idx++; render(); }
       else { finish(); }
@@ -90,6 +99,11 @@
   }
 
   function finish() {
+    /* 把本场题目与答案一起存给结果页（此前在此处误删 bw_answers，导致结果页永远拿不到真实作答） */
+    try {
+      sessionStorage.setItem('bw_answers', JSON.stringify(answers));
+      sessionStorage.setItem('bw_quiz', JSON.stringify(QUESTIONS_PICKED));
+    } catch (e) {}
     var mask = document.getElementById('scanMask');
     var bar = document.getElementById('scanBar');
     var txt = document.getElementById('scanText');
@@ -110,7 +124,6 @@
       if (p >= 100) {
         clearInterval(timer);
         setTimeout(function () {
-          try { sessionStorage.removeItem('bw_answers'); } catch (e) {}
           location.href = 'result.html';
         }, 420);
       }
