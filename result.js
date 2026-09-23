@@ -125,6 +125,28 @@
                  ratio(count.fafeng, total.fafeng) * 0.33;
   var banwei = Math.max(5, Math.min(98, Math.round(8 + weighted * 88)));
 
+  /* ---------- 六维图鉴：逐题累加选项里的真实分值 ----------
+     旧版雷达按“argmax 命中数”画图，每轴只有 0/1 计数，形状几乎不动；
+     这里把 31 题选项里 6 个灵魂侧面的原始分全部累加，每个维度都是
+     0~100 的连续值——选不同答案，六边形就长不一样 */
+  var DIMS = ['摸鱼力', '精神内耗', '发疯欲', '扛锅力', '搞钱欲', '班味浓度'];
+  var score6 = [0, 0, 0, 0, 0, 0];
+  answers.forEach(function (a) {
+    if (!a || !Array.isArray(a.s) || a.s.length < 3) return;
+    var m = a.s[0], nh = a.s[1], ff = a.s[2];
+    score6[0] += m;
+    score6[1] += nh;
+    score6[2] += ff;
+    var sum3 = m + nh + ff;
+    score6[3] += (10 - Math.max(m, ff)) * 0.6 + nh * 0.4;
+    score6[4] += Math.min(10, sum3 * 0.55);
+    score6[5] += Math.min(10, sum3 * 0.75);
+  });
+  var nAns = Math.max(1, answers.length);
+  for (var s6 = 0; s6 < 6; s6++) {
+    score6[s6] = Math.max(4, Math.min(100, Math.round(score6[s6] / (nAns * 10) * 100)));
+  }
+
   /* ---------- 昵称 ---------- */
   var NICKS = ['无名打工狗', '工位钉子户', '带薪困倦选手', '咖啡因战士', '摸鱼预备党员', '键盘侠本侠', '会议室幽灵', '周报文学家'];
   var nick = NICKS[Math.floor(Math.random() * NICKS.length)];
@@ -198,6 +220,122 @@
     });
   }
 
+  /* ---------- 六维图鉴：Canvas 雷达（真实分值驱动 + 生长动画） ---------- */
+  var DW = 360, DH = 340, RN = 6;
+  function rPt(cx, cy, r, i) {
+    var ang = -Math.PI / 2 + i * 2 * Math.PI / RN;
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  }
+  function paintRadar(ctx, W, H, values, t) {
+    var cx = W / 2, cy = H / 2 + 6, R = Math.min(W, H) * 0.34;
+    var ring, i, p;
+    for (ring = 4; ring >= 1; ring--) {
+      ctx.beginPath();
+      for (i = 0; i <= RN; i++) {
+        p = rPt(cx, cy, R * ring / 4, i % RN);
+        if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+      }
+      ctx.strokeStyle = ring === 4 ? '#1d1d1f' : '#e3e3e0';
+      ctx.lineWidth = ring === 4 ? 2 : 1;
+      ctx.stroke();
+    }
+    ctx.font = '600 13px "PingFang SC", sans-serif';
+    ctx.fillStyle = '#1d1d1f';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (i = 0; i < RN; i++) {
+      p = rPt(cx, cy, R, i);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(p[0], p[1]);
+      ctx.strokeStyle = '#e3e3e0';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      var lp = rPt(cx, cy, R + 24, i);
+      ctx.fillText(DIMS[i], lp[0], lp[1]);
+    }
+    ctx.beginPath();
+    for (i = 0; i <= RN; i++) {
+      var v = Math.max(4, values[i % RN]) / 100 * t;
+      p = rPt(cx, cy, R * v, i % RN);
+      if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(198,244,50,0.4)';
+    ctx.fill();
+    ctx.strokeStyle = '#1d1d1f';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    for (i = 0; i < RN; i++) {
+      var vv = Math.max(4, values[i]) / 100 * t;
+      p = rPt(cx, cy, R * vv, i);
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#1d1d1f';
+      ctx.fill();
+    }
+  }
+  /* 供海报调用：离屏 2x 高清导出 */
+  function radarToDataUrl() {
+    var c = document.createElement('canvas');
+    c.width = DW * 2; c.height = DH * 2;
+    var ctx = c.getContext('2d');
+    ctx.setTransform(2, 0, 0, 2, 0, 0);
+    paintRadar(ctx, DW, DH, score6, 1);
+    return c.toDataURL('image/png');
+  }
+  var radarCv = document.getElementById('radar');
+  if (radarCv) {
+    var radarAnimated = false;
+    var drawRadar = function (t) {
+      var dpr = window.devicePixelRatio || 1;
+      var ctx = radarCv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, DW, DH);
+      paintRadar(ctx, DW, DH, score6, t);
+    };
+    var fitRadar = function () {
+      var wrap = radarCv.parentNode;
+      var scale = Math.min(1, (wrap.clientWidth || DW) / DW);
+      var dpr = window.devicePixelRatio || 1;
+      radarCv.width = DW * dpr;
+      radarCv.height = DH * dpr;
+      radarCv.style.width = Math.round(DW * scale) + 'px';
+      radarCv.style.height = Math.round(DH * scale) + 'px';
+    };
+    var animateRadar = function () {
+      if (radarAnimated) return;
+      radarAnimated = true;
+      var t0 = null;
+      var step = function (ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min(1, (ts - t0) / 900);
+        drawRadar(1 - Math.pow(1 - p, 3));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    fitRadar();
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { animateRadar(); io.disconnect(); }
+        });
+      }, { threshold: 0.3 });
+      io.observe(radarCv);
+    } else {
+      animateRadar();
+    }
+    var rzT;
+    window.addEventListener('resize', function () {
+      clearTimeout(rzT);
+      rzT = setTimeout(function () {
+        fitRadar();
+        drawRadar(radarAnimated ? 1 : 0.001);
+      }, 150);
+    });
+  }
+
   /* ---------- html2canvas 海报生成（9:16 专属海报） ---------- */
   var shareBtn = document.getElementById('btnShare');
   var modal = document.getElementById('posterModal');
@@ -248,6 +386,8 @@
     setTxt('spTagName', '精神型号 ' + code);
     setTxt('spTagDesc', '摸鱼' + LV_TXT[mL] + ' · 内耗' + LV_TXT[nL] + ' · 发疯' + LV_TXT[fL]);
     document.getElementById('spImg').src = pngUrl;
+    var spRadar = document.getElementById('spRadar');
+    if (spRadar) spRadar.src = radarToDataUrl();
   }
 
   /* 二维码：优先本地库（直接读 canvas，同步可靠），失败时降级为在线服务 */
@@ -290,6 +430,10 @@
       })
       .then(function () {
         return waitImgReady(document.getElementById('spImg'));
+      })
+      .then(function () {
+        var spRadar = document.getElementById('spRadar');
+        return spRadar && spRadar.src ? waitImgReady(spRadar) : null;
       })
       .then(function () {
         return html2canvas(poster, {

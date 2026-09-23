@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>班味浓度报告 · 班味检测仪</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="page-result">
 
@@ -62,6 +62,13 @@
     <div class="r-tags" id="rTags"></div>
   </section>
 
+  <section class="r-radar-zone">
+    <h2 class="r-block-title"><i class="title-tick"></i>六维图鉴</h2>
+    <div class="radar-wrap">
+      <canvas id="radar" width="360" height="340" aria-label="六维图鉴雷达图"></canvas>
+    </div>
+  </section>
+
   <footer class="r-footer">
     <span>班味检测仪 BANWEI LAB · 打工狗鉴定中心出品</span>
     <span class="r-footer-dog">🐶 汪的都懂</span>
@@ -102,6 +109,10 @@
     </div>
   </div>
 
+  <div class="sp-radar">
+    <img id="spRadar" alt="六维图鉴雷达图">
+  </div>
+
   <div class="sp-tag">
     <b id="spTagName">--</b>
     <span id="spTagDesc">--</span>
@@ -137,6 +148,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="assets/qrcode.min.js"></script>
-<script src="result.js?v=6"></script>
+<script src="result.js?v=7"></script>
 </body>
 </html>
