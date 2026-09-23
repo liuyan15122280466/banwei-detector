@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="打工狗瘫在工位上的插画">
+  <defs>
+    <clipPath id="frame"><rect x="0" y="0" width="800" height="600" rx="0"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <!-- 背景 -->
+    <rect width="800" height="600" fill="#ffffff"/>
+    <circle cx="400" cy="290" r="215" fill="#f6f6f2"/>
+    <circle cx="400" cy="290" r="215" fill="none" stroke="#1d1d1f" stroke-width="3"/>
+
+    <!-- 焦虑波浪线（头顶） -->
+    <g stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round">
+      <path d="M322 96 q12 -16 24 0 q12 16 24 0"/>
+      <path d="M438 78 q12 -16 24 0 q12 16 24 0"/>
+      <path d="M508 120 q10 -13 20 0 q10 13 20 0"/>
+    </g>
+    <text x="296" y="118" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#1d1d1f" transform="rotate(-12 296 118)">zz</text>
+
+    <!-- 桌面 -->
+    <rect x="150" y="356" width="500" height="22" rx="11" fill="#1d1d1f"/>
+    <rect x="196" y="378" width="20" height="150" fill="#1d1d1f"/>
+    <rect x="584" y="378" width="20" height="150" fill="#1d1d1f"/>
+
+    <!-- 显示器 -->
+    <g>
+      <rect x="452" y="216" width="168" height="122" rx="12" fill="#ffffff" stroke="#1d1d1f" stroke-width="5"/>
+      <rect x="466" y="230" width="140" height="94" rx="6" fill="#f6f6f2" stroke="#1d1d1f" stroke-width="3"/>
+      <rect x="478" y="246" width="70" height="8" rx="4" fill="#c6f432" stroke="#1d1d1f" stroke-width="2.5"/>
+      <rect x="478" y="264" width="112" height="7" rx="3.5" fill="#d9d9d4"/>
+      <rect x="478" y="280" width="96" height="7" rx="3.5" fill="#d9d9d4"/>
+      <rect x="478" y="296" width="104" height="7" rx="3.5" fill="#d9d9d4"/>
+      <rect x="518" y="338" width="36" height="12" fill="#1d1d1f"/>
+      <rect x="496" y="350" width="80" height="8" rx="4" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 保温杯（泡枸杞） -->
+    <g>
+      <rect x="382" y="300" width="44" height="56" rx="10" fill="#ffffff" stroke="#1d1d1f" stroke-width="5"/>
+      <rect x="390" y="286" width="28" height="16" rx="6" fill="#c6f432" stroke="#1d1d1f" stroke-width="4"/>
+      <circle cx="398" cy="332" r="4" fill="#a8d81e" stroke="#1d1d1f" stroke-width="2"/>
+      <circle cx="410" cy="340" r="4" fill="#a8d81e" stroke="#1d1d1f" stroke-width="2"/>
+      <path d="M404 292 q3 -10 0 -16" stroke="#1d1d1f" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- 打工狗身体（瘫在桌上） -->
+    <g>
+      <!-- 后腿/臀部在椅子上 -->
+      <ellipse cx="268" cy="470" rx="58" ry="46" fill="#e8a94e" stroke="#1d1d1f" stroke-width="5"/>
+      <!-- 尾巴 -->
+      <path d="M216 452 q-30 -8 -34 -34" stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="180" cy="414" rx="14" ry="10" fill="#ffffff" stroke="#1d1d1f" stroke-width="4" transform="rotate(-30 180 414)"/>
+      <!-- 身体从椅子延伸到桌面 -->
+      <path d="M262 432 Q300 400 330 380 L430 380 Q470 384 486 356 L486 356 Q440 348 400 356 L330 372 Q280 396 250 440 Z"
+            fill="#e8a94e" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+      <!-- 趴在前面的前肢 -->
+      <path d="M430 380 q46 2 60 -18" stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="494" cy="362" rx="16" ry="12" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+
+      <!-- 头（耷拉在手臂上） -->
+      <g transform="rotate(8 520 330)">
+        <ellipse cx="520" cy="322" rx="74" ry="62" fill="#e8a94e" stroke="#1d1d1f" stroke-width="5"/>
+        <!-- 耳朵 -->
+        <path d="M462 282 q-22 -30 -6 -52 q26 4 34 34 z" fill="#8a5a22" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M578 282 q22 -30 6 -52 q-26 4 -34 34 z" fill="#8a5a22" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+        <!-- 死鱼眼 -->
+        <circle cx="496" cy="316" r="13" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+        <circle cx="499" cy="318" r="3.5" fill="#1d1d1f"/>
+        <circle cx="544" cy="316" r="13" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+        <circle cx="547" cy="318" r="3.5" fill="#1d1d1f"/>
+        <!-- 眼皮（半睁，疲惫感） -->
+        <path d="M482 312 q14 -10 28 -2" stroke="#1d1d1f" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M530 312 q14 -10 28 -2" stroke="#1d1d1f" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- 鼻子和嘴 -->
+        <ellipse cx="520" cy="344" rx="9" ry="7" fill="#1d1d1f"/>
+        <path d="M520 351 q0 8 -8 10 M520 351 q0 8 8 10" stroke="#1d1d1f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- 腮红 -->
+        <ellipse cx="474" cy="338" rx="9" ry="5" fill="#f4b8a0" opacity="0.8"/>
+        <ellipse cx="566" cy="338" rx="9" ry="5" fill="#f4b8a0" opacity="0.8"/>
+      </g>
+    </g>
+
+    <!-- 椅子 -->
+    <g>
+      <rect x="216" y="492" width="110" height="18" rx="9" fill="#1d1d1f"/>
+      <rect x="262" y="510" width="16" height="52" fill="#1d1d1f"/>
+      <rect x="226" y="556" width="88" height="12" rx="6" fill="#1d1d1f"/>
+      <circle cx="230" cy="572" r="8" fill="#1d1d1f"/>
+      <circle cx="310" cy="572" r="8" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 地面线 -->
+    <line x1="120" y1="568" x2="680" y2="568" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 破烂公文包 -->
+    <g>
+      <rect x="560" y="500" width="104" height="68" rx="10" fill="#ffffff" stroke="#1d1d1f" stroke-width="5"/>
+      <path d="M588 500 q24 -26 48 0" stroke="#1d1d1f" stroke-width="5" fill="none"/>
+      <path d="M560 522 l18 10 M640 516 l24 8 M576 548 l20 -6" stroke="#1d1d1f" stroke-width="3" stroke-linecap="round"/>
+      <path d="M598 534 h28" stroke="#c6f432" stroke-width="6" stroke-linecap="round"/>
+    </g>
+
+    <!-- 散落的纸张与咖啡渍 -->
+    <g>
+      <rect x="196" y="520" width="44" height="34" rx="4" fill="#ffffff" stroke="#1d1d1f" stroke-width="3.5" transform="rotate(-14 218 537)"/>
+      <line x1="206" y1="530" x2="232" y2="524" stroke="#1d1d1f" stroke-width="2.5" transform="rotate(-14 218 537)"/>
+      <line x1="208" y1="540" x2="234" y2="534" stroke="#1d1d1f" stroke-width="2.5" transform="rotate(-14 218 537)"/>
+      <path d="M500 560 q10 -12 20 0 q10 12 20 0" stroke="#d9d9d4" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- 顶部标语牌 -->
+    <g transform="rotate(-3 400 40)">
+      <rect x="312" y="22" width="176" height="34" rx="17" fill="#c6f432" stroke="#1d1d1f" stroke-width="3.5"/>
+      <text x="400" y="46" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="19" font-weight="800" fill="#1d1d1f">灵魂已下班</text>
+    </g>
+  </g>
+</svg>

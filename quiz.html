@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>班味检测中… · 班味检测仪</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body class="page-quiz">
+
+<header class="quiz-header">
+  <a class="quiz-back" href="index.html" aria-label="返回首页">←</a>
+  <div class="quiz-brand">班味检测仪</div>
+  <div class="quiz-count"><b id="qNow">1</b><span>/20</span></div>
+</header>
+
+<div class="battery-zone">
+  <div class="battery">
+    <div class="battery-body">
+      <div class="battery-fill" id="batteryFill"></div>
+      <div class="battery-gloss"></div>
+    </div>
+    <div class="battery-cap"></div>
+  </div>
+  <div class="battery-label"><span id="batteryText">生命电量 100%</span><span class="battery-tip">上班正在消耗生命</span></div>
+</div>
+
+<main class="quiz-main">
+  <section class="q-card" id="qCard">
+    <div class="q-scene" id="qScene">周一早高峰</div>
+    <h2 class="q-title" id="qTitle">题目加载中…</h2>
+    <div class="q-options" id="qOptions"></div>
+  </section>
+
+  <div class="quiz-nav">
+    <button class="btn-ghost" id="btnPrev" type="button">上一题</button>
+    <div class="q-dots" id="qDots" aria-hidden="true"></div>
+    <span class="nav-placeholder"></span>
+  </div>
+</main>
+
+<div class="scan-mask" id="scanMask" hidden>
+  <div class="scan-box">
+    <div class="scan-dog">🐶</div>
+    <div class="scan-line"></div>
+  </div>
+  <p class="scan-text" id="scanText">正在提取班味样本…</p>
+  <div class="scan-bar"><i id="scanBar"></i></div>
+</div>
+
+<script src="questions.js"></script>
+<script src="quiz.js"></script>
+</body>
+</html>

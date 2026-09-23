@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>班味浓度报告 · 班味检测仪</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body class="page-result">
+
+<div id="posterCard" class="poster-card">
+
+  <header class="r-header">
+    <div class="brand-logo">
+      <span class="logo-badge">汪</span>
+      <span class="logo-text">班味检测仪</span>
+    </div>
+    <span class="r-report-no" id="reportNo">NO.BW-000000</span>
+  </header>
+
+  <section class="r-hero">
+    <figure class="r-figure">
+      <img src="assets/result.svg" alt="打工狗瘫在电脑前的插画" class="r-img" id="resultImg" draggable="false">
+    </figure>
+    <h1 class="r-title">班味浓度报告</h1>
+    <p class="r-subtitle">当前打工人：<b id="userNick">无名打工狗</b></p>
+    <div class="r-verdict" id="verdictChip">检测完成</div>
+  </section>
+
+  <section class="r-grid" aria-label="核心数据">
+    <div class="stat-row">
+      <span class="stat-name">摸鱼浓度</span>
+      <span class="stat-bar"><i id="barMoyu"></i></span>
+      <b class="stat-val" id="statMoyu">--</b>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">背锅指数</span>
+      <span class="stat-bar"><i id="barBeiguo"></i></span>
+      <b class="stat-val" id="statBeiguo">--</b>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">发疯临界值</span>
+      <span class="stat-bar"><i id="barFafeng"></i></span>
+      <b class="stat-val" id="statFafeng">--</b>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">工资到账日</span>
+      <span class="stat-bar"><i id="barGongzi"></i></span>
+      <b class="stat-val" id="statGongzi">--</b>
+    </div>
+  </section>
+
+  <section class="r-detail">
+    <h2 class="r-block-title"><i class="title-tick"></i>职场状态诊断</h2>
+    <p class="r-comment" id="rComment">点评生成中…</p>
+    <div class="r-tags" id="rTags"></div>
+  </section>
+
+  <section class="r-radar-zone">
+    <h2 class="r-block-title"><i class="title-tick"></i>打工人六维图鉴</h2>
+    <div class="radar-wrap">
+      <canvas id="radar" width="360" height="340"></canvas>
+    </div>
+  </section>
+
+  <footer class="r-footer">
+    <span>班味检测仪 BANWEI LAB · 打工狗鉴定中心出品</span>
+    <span class="r-footer-dog">🐶 汪的都懂</span>
+  </footer>
+</div>
+
+<!-- 9:16 分享海报（离屏隐藏，仅用于生成图片） -->
+<div id="sharePoster" class="share-poster" aria-hidden="true">
+  <header class="sp-head">
+    <div class="brand-logo">
+      <span class="logo-badge">汪</span>
+      <span class="logo-text">班味检测仪</span>
+    </div>
+    <span class="sp-no" id="spNo">NO.BW-000000</span>
+  </header>
+
+  <div class="sp-verdict" id="spVerdict">班味浓度：检测中</div>
+
+  <figure class="sp-figure">
+    <img src="assets/result.svg" alt="" class="sp-img" id="spImg" draggable="false">
+  </figure>
+
+  <div class="sp-stats">
+    <div class="sp-stat">
+      <span class="sp-stat-name">摸鱼浓度</span>
+      <b class="sp-stat-val" id="spMoyu">--</b>
+    </div>
+    <div class="sp-stat">
+      <span class="sp-stat-name">发疯临界值</span>
+      <b class="sp-stat-val" id="spFafeng">--</b>
+    </div>
+  </div>
+
+  <div class="sp-tag">
+    <b id="spTagName">--</b>
+    <span id="spTagDesc">--</span>
+  </div>
+
+  <footer class="sp-foot">
+    <span>班味检测仪 BANWEI LAB</span>
+    <span class="sp-foot-dog">🐶 汪的都懂</span>
+  </footer>
+</div>
+
+<div class="share-zone no-capture">
+  <button class="btn-share" id="btnShare" type="button">生成海报，一键发圈</button>
+  <button class="btn-retry" id="btnRetry" type="button">再测一次</button>
+  <p class="share-tip" id="shareTip">长按保存海报图片，收获打工人共鸣</p>
+</div>
+
+<div class="poster-modal no-capture" id="posterModal" hidden>
+  <div class="poster-modal-inner">
+    <img id="posterImg" alt="班味检测海报">
+    <div class="poster-actions">
+      <a class="btn-share" id="posterDownload" download="班味浓度报告.png">保存图片</a>
+      <button class="btn-retry" id="posterClose" type="button">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="result.js?v=3"></script>
+</body>
+</html>

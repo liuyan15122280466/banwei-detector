@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>班味检测仪 · 测测你的班味浓度</title>
+<meta name="description" content="面向职场打工人的情绪共鸣型趣味测试，3-5分钟检测你的班味浓度，一键生成分享卡片。">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body class="page-home">
+
+<div class="bg-doodles" aria-hidden="true">
+  <span class="doodle d1">✦</span>
+  <span class="doodle d2">〜</span>
+  <span class="doodle d3">〒▽〒</span>
+  <span class="doodle d4">✦</span>
+  <span class="doodle d5">zzZ</span>
+  <span class="doodle d6">〜</span>
+</div>
+
+<main class="home-wrap">
+  <header class="brand-bar">
+    <div class="brand-logo">
+      <span class="logo-badge">汪</span>
+      <span class="logo-text">班味检测仪</span>
+    </div>
+    <span class="brand-ver">BANWEI LAB · v1.0</span>
+  </header>
+
+  <section class="hero">
+    <h1 class="hero-title">
+      <span class="hero-title-line">你的班味</span>
+      <span class="hero-title-line accent">超标了吗？</span>
+    </h1>
+    <p class="hero-sub">3 分钟检测 · 深度扫描你的打工人灵魂</p>
+
+    <figure class="hero-figure">
+      <img src="assets/hero.svg" alt="打工狗瘫在工位上的插画" class="hero-img" draggable="false">
+      <span class="hero-bubble">灵魂已下班…</span>
+    </figure>
+
+    <div class="hero-cta">
+      <a class="btn-start" href="quiz.html" id="btnStart">
+        <span class="btn-start-inner">开 始 测 试</span>
+      </a>
+      <p class="hero-note">无需注册 · 凭直觉作答 · 已有 <b id="testedCount">284,921</b> 只打工狗被检测</p>
+    </div>
+  </section>
+
+  <section class="tag-preview">
+    <h2 class="section-title"><i class="title-tick"></i>你可能被判定为</h2>
+    <ul class="tag-cloud">
+      <li class="tag-pill pill-green">摸鱼宗师</li>
+      <li class="tag-pill pill-yellow">背锅侠</li>
+      <li class="tag-pill pill-black">职场丧尸</li>
+      <li class="tag-pill pill-outline">发疯预备役</li>
+    </ul>
+  </section>
+
+  <section class="steps" aria-label="检测流程">
+    <div class="step-row">
+      <span class="step-no">01</span>
+      <div class="step-text">
+        <h3>诚实作答</h3>
+        <p>20 道职场灵魂拷问，凭第一直觉选</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-no">02</span>
+      <div class="step-text">
+        <h3>生成报告</h3>
+        <p>班味浓度四维数据 + 专属毒舌点评</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-no">03</span>
+      <div class="step-text">
+        <h3>一键发圈</h3>
+        <p>生成分享卡片，收获打工人的共鸣</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <p>本检测纯属娱乐 · 如有雷同，说明你真的该休息了</p>
+    <p class="footer-dog">© 班味检测仪 BANWEI LAB · 打工狗出品</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var base = 284921, key = 'bw_tested_base';
+  try {
+    var saved = localStorage.getItem(key);
+    if (!saved) { saved = base; localStorage.setItem(key, String(base)); }
+    var n = parseInt(saved, 10) + Math.floor(Math.random() * 7) + 1;
+    localStorage.setItem(key, String(n));
+    var el = document.getElementById('testedCount');
+    if (el) el.textContent = n.toLocaleString('zh-CN');
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
