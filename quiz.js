@@ -1,7 +1,6 @@
 /* 班味检测仪 - 答题逻辑 */
 (function () {
-  var TOTAL = 20;
-  /* 每次开测从题库随机抽 20 题，重测体验不重复 */
+  /* 全量 31 题都上，只洗牌打乱顺序，每次开测体验不重样 */
   var QUESTIONS_PICKED = (function () {
     try {
       var pool = QUESTIONS.slice();
@@ -9,8 +8,8 @@
         var j = Math.floor(Math.random() * (i + 1));
         var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
       }
-      return pool.slice(0, Math.min(TOTAL, pool.length));
-    } catch (e) { return QUESTIONS.slice(0, TOTAL); }
+      return pool;
+    } catch (e) { return QUESTIONS.slice(); }
   })();
   var total = QUESTIONS_PICKED.length;
   var idx = 0;
@@ -112,15 +111,16 @@
       '正在提取班味样本…',
       '检测到高浓度班味…',
       '正在分析摸鱼行为轨迹…',
-      '正在计算背锅承受力…',
-      '正在生成生存图鉴…'
+      '正在测量内耗深度…',
+      '正在捕捉发疯前兆…',
+      '正在生成嘴替报告…'
     ];
     var p = 0;
     var timer = setInterval(function () {
       p += Math.random() * 14 + 6;
       if (p > 100) p = 100;
       bar.style.width = p + '%';
-      txt.textContent = msgs[Math.min(msgs.length - 1, Math.floor(p / 22))];
+      txt.textContent = msgs[Math.min(msgs.length - 1, Math.floor(p / 18))];
       if (p >= 100) {
         clearInterval(timer);
         setTimeout(function () {

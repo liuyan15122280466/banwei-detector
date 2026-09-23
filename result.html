@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>班味浓度报告 · 班味检测仪</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body class="page-result">
 
@@ -30,38 +30,36 @@
 
   <section class="r-grid" aria-label="核心数据">
     <div class="stat-row">
-      <span class="stat-name">摸鱼浓度</span>
+      <span class="stat-name">摸鱼值</span>
       <span class="stat-bar"><i id="barMoyu"></i></span>
       <b class="stat-val" id="statMoyu">--</b>
     </div>
     <div class="stat-row">
-      <span class="stat-name">背锅指数</span>
+      <span class="stat-name">内耗值</span>
       <span class="stat-bar"><i id="barBeiguo"></i></span>
       <b class="stat-val" id="statBeiguo">--</b>
     </div>
     <div class="stat-row">
-      <span class="stat-name">发疯临界值</span>
+      <span class="stat-name">发疯值</span>
       <span class="stat-bar"><i id="barFafeng"></i></span>
       <b class="stat-val" id="statFafeng">--</b>
     </div>
     <div class="stat-row">
-      <span class="stat-name">工资到账日</span>
+      <span class="stat-name">班味指数</span>
       <span class="stat-bar"><i id="barGongzi"></i></span>
       <b class="stat-val" id="statGongzi">--</b>
     </div>
   </section>
 
   <section class="r-detail">
-    <h2 class="r-block-title"><i class="title-tick"></i>职场状态诊断</h2>
+    <h2 class="r-block-title"><i class="title-tick"></i>你的精神型号</h2>
+    <div class="r-type">
+      <b class="r-type-name" id="rTypeName">检测中</b>
+      <span class="r-type-code" id="rTypeCode">27 型精神状态鉴定</span>
+      <p class="r-type-desc" id="rTypeDesc">点评生成中…</p>
+    </div>
     <p class="r-comment" id="rComment">点评生成中…</p>
     <div class="r-tags" id="rTags"></div>
-  </section>
-
-  <section class="r-radar-zone">
-    <h2 class="r-block-title"><i class="title-tick"></i>打工人六维图鉴</h2>
-    <div class="radar-wrap">
-      <canvas id="radar" width="360" height="340"></canvas>
-    </div>
   </section>
 
   <footer class="r-footer">
@@ -95,11 +93,11 @@
 
   <div class="sp-stats">
     <div class="sp-stat">
-      <span class="sp-stat-name">摸鱼浓度</span>
+      <span class="sp-stat-name">摸鱼值</span>
       <b class="sp-stat-val" id="spMoyu">--</b>
     </div>
     <div class="sp-stat">
-      <span class="sp-stat-name">发疯临界值</span>
+      <span class="sp-stat-name">发疯值</span>
       <b class="sp-stat-val" id="spFafeng">--</b>
     </div>
   </div>
@@ -139,6 +137,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="assets/qrcode.min.js"></script>
-<script src="result.js?v=5"></script>
+<script src="result.js?v=6"></script>
 </body>
 </html>

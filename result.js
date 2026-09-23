@@ -1,7 +1,5 @@
-/* 班味检测仪 - 结果页逻辑 */
+/* 班味检测仪 - 结果页逻辑（三轴嘴替版：27 型精神状态鉴定） */
 (function () {
-  var DIMS = ['摸鱼浓度', '背锅指数', '发疯值', '内耗值', '搞钱欲', '恋爱脑'];
-
   /* ---------- 读取本场答题数据 ---------- */
   var answers = [];
   var quiz = [];
@@ -9,37 +7,123 @@
     answers = JSON.parse(sessionStorage.getItem('bw_answers') || '[]');
     quiz = JSON.parse(sessionStorage.getItem('bw_quiz') || '[]');
   } catch (e) {}
+
+  /* 题库兜底：拿不到本场题目（或旧数据没有 axis 字段）时，按题库固定顺序推断每题所属轴
+     题库顺序：摸鱼 11 题 / 内耗 10 题 / 发疯 10 题 */
+  function pseudoQuiz(n) {
+    var arr = [];
+    for (var i = 0; i < n; i++) {
+      arr.push({ axis: i < 11 ? 'moyu' : (i < 21 ? 'neihao' : 'fafeng') });
+    }
+    return arr;
+  }
+  var quizOk = Array.isArray(quiz) && quiz.length > 0 &&
+    quiz.some(function (q) { return q && q.axis; });
+  if (!quizOk) quiz = [];
+
   if (!Array.isArray(answers) || answers.length === 0) {
-    /* 没有答题记录：生成一份演示数据，保证页面可直接访问不空白 */
-    for (var di = 0; di < 20; di++) answers.push({ text: 'demo', s: [5, 5, 5, 5, 5, 5] });
+    /* 没有答题记录：生成一份“班味本味”演示数据，保证页面可直接访问不空白 */
+    if (quiz.length === 0) quiz = pseudoQuiz(31);
+    var quota = { moyu: 5, neihao: 5, fafeng: 5 };
+    var LEAN = { moyu: [9, 2, 2], neihao: [2, 9, 2], fafeng: [2, 2, 9] };
+    var AWAY = { moyu: [2, 9, 2], neihao: [9, 2, 2], fafeng: [9, 2, 2] };
+    answers = quiz.map(function (q) {
+      var ax = (q && LEAN[q.axis]) ? q.axis : 'moyu';
+      if (quota[ax] > 0) { quota[ax]--; return { text: 'demo', s: LEAN[ax].slice() }; }
+      return { text: 'demo', s: AWAY[ax].slice() };
+    });
+  } else if (quiz.length !== answers.length) {
+    quiz = pseudoQuiz(answers.length);
   }
-  if (!Array.isArray(quiz) || quiz.length !== answers.length) {
-    /* 兜底：拿不到本场题目时按顺序取题库（仅影响极值计算精度） */
-    quiz = (window.QUESTIONS || []).slice(0, answers.length);
-  }
 
-  /* ---------- 统计六维原始分（百分制） ---------- */
-  var n = answers.length;
-  var sum = [0, 0, 0, 0, 0, 0];
-  answers.forEach(function (a) {
-    if (!a || !a.s) return;
-    for (var i = 0; i < 6; i++) sum[i] += (a.s[i] || 0);
+  /* ---------- 三轴计分（MBTI 式独立轴） ----------
+     每道题只属于一个轴（questions.js 的 axis 字段）：
+     选中选项的“灵魂倾向”（s 向量 argmax，0摸鱼/1内耗/2发疯）
+     与题目所属轴一致时该轴 +1。三轴互不干扰，27 型全部可达 */
+  var IDX = { moyu: 0, neihao: 1, fafeng: 2 };
+  var count = { moyu: 0, neihao: 0, fafeng: 0 };
+  var total = { moyu: 0, neihao: 0, fafeng: 0 };
+  answers.forEach(function (a, i) {
+    var q = quiz[i] || {};
+    var ax = q.axis;
+    if (!IDX.hasOwnProperty(ax)) return;
+    total[ax]++;
+    if (!a || !Array.isArray(a.s) || a.s.length < 3) return;
+    var best = 0;
+    for (var k = 1; k < 3; k++) if (a.s[k] > a.s[best]) best = k;
+    if (best === IDX[ax]) count[ax]++;
   });
-  var score = sum.map(function (v, i) {
-    var cap = n * 10;
-    return Math.max(2, Math.min(100, Math.round(v / cap * 100)));
-  });
 
-  var moyu = score[0], beiguo = score[1], fafeng = score[2], neihao = score[3], gaoqian = score[4], lianai = score[5];
+  /* ---------- 三轴分级：高≥7 / 中 4-6 / 低≤3 ---------- */
+  function levelOf(c) { return c >= 7 ? 2 : (c >= 4 ? 1 : 0); }
+  var LV_TXT = ['低', '中', '高'];
+  var mL = levelOf(count.moyu), nL = levelOf(count.neihao), fL = levelOf(count.fafeng);
+  var typeIdx = mL * 9 + nL * 3 + fL; /* 0~26 */
 
-  /* ---------- 班味指数：相对分映射 ----------
-     以全题库“最躺选项组合”与“最丧选项组合”的加权分为基准，
-     把用户得分线性映射到 15~92，保证五种人格称号都真实可达 */
-  var W = [0.26, 0.16, 0.18, 0.22, 0.12, 0.06];
-  var LIGHT_BASE = 43, HEAVY_BASE = 54; /* 全题库最躺/最丧组合的加权基准分 */
-  var weighted = moyu * W[0] + beiguo * W[1] + fafeng * W[2] + neihao * W[3] + gaoqian * W[4] + lianai * W[5];
-  var t = (weighted - LIGHT_BASE) / (HEAVY_BASE - LIGHT_BASE);
-  var banwei = Math.max(5, Math.min(98, Math.round(15 + t * 77)));
+  /* ---------- 27 型嘴替标签 ----------
+     下标 [摸鱼级][内耗级][发疯级]（0=低 1=中 2=高），标签即嘴替 */
+  var TYPES = [
+    [ /* 摸鱼·低：活全你干 */
+      [ /* 内耗·低 */
+        { name: '班味绝缘体', desc: '摸鱼不会，内耗不会，发疯不敢', quote: '全公司只有你在认真上班，建议把你供起来镇楼。' },
+        { name: '绷不住学徒', desc: '干活最卖力，偶尔也想掀桌', quote: '你的发疯是限量款，一年发售两次，每次都吓坏全组。' },
+        { name: '定时炸弹卷王', desc: '卷得明明白白，疯得轰轰烈烈', quote: '干最狠的活，发最疯的疯，睡最香的觉，说的就是你。' }
+      ],
+      [ /* 内耗·中 */
+        { name: '哑巴亏专业户', desc: '活最多，话最少，委屈全咽肚里', quote: '你什么都没说，但你的黑眼圈替你都招了。' },
+        { name: '职场受气包', desc: '锅全是你背，疯只敢在心里发', quote: '表面：好的收到。内心：凭什么？？（音量 0.3）' },
+        { name: '憋疯的卷王', desc: '白天拼命干活，晚上疯狂 emo', quote: '你的精神状态：一半在加班，一半在写辞职信。' }
+      ],
+      [ /* 内耗·高 */
+        { name: '沉默的螺丝钉', desc: '不摸鱼不反抗，默默把自己拧紧', quote: '你是公司最稳的螺丝钉，可惜锈了也没人管。' },
+        { name: '高压锅员工', desc: '内耗满格，发疯临界，全靠仙气吊着', quote: '你不是没情绪，你只是把情绪都腌进了工位。' },
+        { name: '炸毛劳模', desc: '干活第一，内耗第一，发疯也第一', quote: '你是绷到极限的皮筋：要么弹回去，要么当场断给大家看。' }
+      ]
+    ],
+    [ /* 摸鱼·中：半躺半卷 */
+      [
+        { name: '半躺养生派', desc: '活照干，鱼照摸，心态稳如老狗', quote: '打工中庸之道传人：干得比摸鱼多，摸得比卷王欢。' },
+        { name: '佛系发疯选手', desc: '平时岁月静好，绷不住就疯一下', quote: '你的发疯是养生式的：定期排一排，不伤肝不伤心。' },
+        { name: '工位显眼包', desc: '摸鱼随缘，内耗为零，发疯管够', quote: '同事看你：这人疯了吧。你看同事：你们怎么还不疯。' }
+      ],
+      [
+        { name: '全国统一打工人', desc: '有点摸鱼，有点内耗，总体稳定', quote: '摸鱼会愧疚，内耗会自愈，周一想辞职但还是会起床。' },
+        { name: '班味本味', desc: '摸鱼、内耗、发疯均衡发展', quote: '你不是有班味，你就是班味成精，建议直接来检测仪上班。' },
+        { name: '攒疯型选手', desc: '攒够委屈就发一次大的，周期准点', quote: '你的发疯周期和发工资一样准，全组都学会看日历躲你。' }
+      ],
+      [
+        { name: '心累摸鱼党', desc: '鱼是摸了，但全程心跳加速', quote: '你摸的不是鱼，是十分钟惊心动魄的带薪心悸。' },
+        { name: '精神离职预备役', desc: '身在工位，魂在远方', quote: '肉体已签到，灵魂还在家躺着，双方暂时互不打扰。' },
+        { name: '行走的情绪过山车', desc: '摸鱼时内耗，内耗完发疯，无限循环', quote: '你的精神状态一天四季：早上春天，中午寒冬，下午直接末日。' }
+      ]
+    ],
+    [ /* 摸鱼·高：带薪躺平学十级 */
+      [
+        { name: '摸鱼宗师', desc: '摸鱼界扫地僧，稳稳地躺', quote: '你把上班过成了带薪度假，老板还以为你很忙。' },
+        { name: '带薪发疯艺术家', desc: '摸鱼为主，偶尔发疯调节气氛', quote: '你的工位就是舞台：上一秒带薪如厕，下一秒带薪表演。' },
+        { name: '疯鱼得水', desc: '摸鱼到极致，发疯到通透，零内耗', quote: '你才是真清醒：工资是老板的，快乐是自己的。' }
+      ],
+      [
+        { name: '愧疚式摸鱼人', desc: '鱼摸得很熟练，摸完忏悔半天', quote: '摸鱼十分钟，忏悔一小时：鱼没摸好，人也没躺好。' },
+        { name: '薛定谔的打工人', desc: '摸鱼怕发现，干活想摸鱼，反复横跳', quote: '不看工牌都不知道，自己今天是在上班还是在渡劫。' },
+        { name: '精神状态领先版', desc: '摸鱼是日常，发疯是习惯', quote: '同事还在内耗，你已经在疯，精神状态领先一个版本。' }
+      ],
+      [
+        { name: '辞职信收藏家', desc: '辞职信写了 38 版，一版没发', quote: '你的勇气全用来写辞职信了，可惜全都存进了草稿箱。' },
+        { name: '死循环打工人', desc: '摸鱼因为累，内耗因为摸鱼', quote: '摸鱼是因为累，内耗是因为摸鱼，发疯是因为内耗，完美闭环。' },
+        { name: '赛博疯人院院长', desc: '三轴全拉满，班味宇宙中心', quote: '检测仪看到你的数据直接死机：建议你来当检测仪本仪。' }
+      ]
+    ]
+  ];
+  var type = TYPES[mL][nL][fL];
+  var code = '鱼' + LV_TXT[mL] + '·耗' + LV_TXT[nL] + '·疯' + LV_TXT[fL];
+
+  /* ---------- 班味指数：三轴占比加权，映射到 8~96 ---------- */
+  function ratio(c, t) { return t > 0 ? c / t : 0; }
+  var weighted = ratio(count.moyu, total.moyu) * 0.34 +
+                 ratio(count.neihao, total.neihao) * 0.33 +
+                 ratio(count.fafeng, total.fafeng) * 0.33;
+  var banwei = Math.max(5, Math.min(98, Math.round(8 + weighted * 88)));
 
   /* ---------- 昵称 ---------- */
   var NICKS = ['无名打工狗', '工位钉子户', '带薪困倦选手', '咖啡因战士', '摸鱼预备党员', '键盘侠本侠', '会议室幽灵', '周报文学家'];
@@ -52,34 +136,13 @@
 
   /* ---------- 报告编号 ---------- */
   var no = 'NO.BW-' + String(Date.now()).slice(-6);
-  document.getElementById('reportNo').textContent = no;
-  document.getElementById('userNick').textContent = nick;
 
-  /* ---------- 四宫格 ---------- */
-  function pctText(v) { return v + '%'; }
-  function level10(v) { return Math.max(1, Math.round(v / 10)) + '/10'; }
-  function fafengText(v) {
-    if (v >= 85) return '已爆炸💥';
-    if (v >= 60) return '即将爆炸';
-    if (v >= 35) return '冒烟中';
-    return '稳定如狗';
+  function setTxt(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
   }
-  function gongziText(v) {
-    if (v >= 80) return '遥遥无期';
-    if (v >= 55) return '月底见';
-    if (v >= 30) return '快到了';
-    return '已到账';
-  }
-
-  function setStat(id, barId, val, barPct) {
-    document.getElementById(id).textContent = val;
-    var bar = document.getElementById(barId);
-    setTimeout(function () { bar.style.width = barPct + '%'; }, 300);
-  }
-  setStat('statMoyu', 'barMoyu', pctText(moyu), moyu);
-  setStat('statBeiguo', 'barBeiguo', level10(beiguo), beiguo);
-  setStat('statFafeng', 'barFafeng', fafengText(fafeng), fafeng);
-  setStat('statGongzi', 'barGongzi', gongziText(gaoqian), Math.max(12, gaoqian));
+  setTxt('reportNo', no);
+  setTxt('userNick', nick);
 
   /* ---------- 判定词 ---------- */
   var verdict;
@@ -88,205 +151,52 @@
   else if (banwei >= 40) verdict = '班味浓度：中度感染';
   else if (banwei >= 20) verdict = '班味浓度：轻度携带';
   else verdict = '班味浓度：几乎没味？';
-  document.getElementById('verdictChip').textContent = verdict;
+  setTxt('verdictChip', verdict);
 
-  /* ---------- 人格称号（主判定，可分享） ---------- */
-  var PERSONAS = [
-    { min: 80, name: '班味核弹', sub: 'BANWEI NUCLEAR', quote: '你不是在上班，你是长在了公司。建议把工牌换成胸卡：危。' },
-    { min: 60, name: '资深社畜', sub: 'SENIOR CORPO-RAT', quote: '班味已经焊死在你身上，洗澡只能洗掉表层，深层要用年假。' },
-    { min: 40, name: '半糖打工人', sub: 'HALF-SUGAR WORKER', quote: '一半是班味，一半是人味。摸鱼时愧疚，上班时想逃，很真实了。' },
-    { min: 20, name: '松弛幸存者', sub: 'CHILL SURVIVOR', quote: '班味只是路过你，没能住下。你守住了下班后的自己，很了不起。' },
-    { min: 0, name: '人间清醒', sub: 'SOBER LEGEND', quote: '班味检测仪在你面前集体失灵。请问贵司还招人吗？在线等。' }
-  ];
-  var persona = PERSONAS.find(function (p) { return banwei >= p.min; }) || PERSONAS[PERSONAS.length - 1];
-
-  /* ---------- 毒舌点评 ---------- */
-  var comment;
-  if (banwei >= 80) {
-    comment = '恭喜你，班味已经渗透到 DNA 层面。你的工位散发着一种“生人勿近”的气场，连保洁阿姨都想给你多倒一杯热水。建议：立刻打开请假软件，你的灵魂比你的 KPI 更需要抢救。';
-  } else if (banwei >= 60) {
-    comment = '你的班味浓度已超过安全阈值。白天是熟练的社畜，晚上是emo的诗人，朋友圈仅老板可见的分组里藏着你全部的委屈。别硬撑了，今晚早点睡，明天继续。';
-  } else if (banwei >= 40) {
-    comment = '你处于“半人半班”的量子叠加态：上班时偶尔摸鱼，摸鱼时偶尔愧疚。好在你还记得自己是个活人，会准时吃饭、偶尔下班。保持住，别让班味占领高地。';
-  } else if (banwei >= 20) {
-    comment = '班味轻微携带者。你摸鱼有度、背锅有限，居然还保留着下班后的生活，实属打工人中的稀缺品种。请守护好这份松弛感，它比年终奖珍贵。';
-  } else {
-    comment = '几乎检测不到班味？！要么你是刚入职的萌新，要么你已经实现财富自由。无论哪种，请留下你的联系方式，全公司打工狗都想向你取经。';
+  /* ---------- 四宫格：三轴计数 + 班味指数 ---------- */
+  function setStat(id, barId, val, barPct) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+    var bar = document.getElementById(barId);
+    if (bar) setTimeout(function () { bar.style.width = barPct + '%'; }, 300);
   }
-  document.getElementById('rComment').textContent = comment;
+  setStat('statMoyu', 'barMoyu', count.moyu + '/' + total.moyu, Math.round(ratio(count.moyu, total.moyu) * 100));
+  setStat('statBeiguo', 'barBeiguo', count.neihao + '/' + total.neihao, Math.round(ratio(count.neihao, total.neihao) * 100));
+  setStat('statFafeng', 'barFafeng', count.fafeng + '/' + total.fafeng, Math.round(ratio(count.fafeng, total.fafeng) * 100));
+  setStat('statGongzi', 'barGongzi', String(banwei), banwei);
 
-  /* ---------- 标签体系 ---------- */
-  var TAGS = [
-    { min: 78, dim: 0, name: '摸鱼宗师', desc: '在老板眼皮子底下完成了自己的副业' },
-    { min: 60, dim: 0, name: '带薪拉屎大师', desc: '厕所隔间是你的第二工位' },
-    { min: 78, dim: 1, name: '背锅侠', desc: '天塌下来有你顶着，功劳全是别人的' },
-    { min: 60, dim: 1, name: '老好人预备役', desc: '“不好意思”是你的口头禅' },
-    { min: 78, dim: 2, name: '稳定发疯', desc: '表面情绪稳定，内心早已炸成烟花' },
-    { min: 60, dim: 2, name: '发疯预备役', desc: '距离掀桌只差一次无效加班' },
-    { min: 78, dim: 3, name: '职场丧尸', desc: '肉体在岗，灵魂已离职' },
-    { min: 60, dim: 3, name: '精神内耗王', desc: '老板一个眼神，你脑补了一整季宫斗剧' },
-    { min: 78, dim: 4, name: '人间清醒搞钱机', desc: '每一分钱都花在刀刃上' },
-    { min: 60, dim: 4, name: '副业卷王', desc: '主业是副业的休息时间' },
-    { min: 70, dim: 5, name: '办公室恋爱脑', desc: '上班的动力来自前台的 TA' },
-    { min: 50, dim: 5, name: '嗑糖达人', desc: '别人的爱情，你操着亲妈的心' }
+  /* ---------- 精神型号（27 型主判定，可分享） ---------- */
+  setTxt('rTypeName', type.name);
+  setTxt('rTypeCode', '精神型号 ' + code + ' · 27 型之 ' + (typeIdx + 1));
+  setTxt('rTypeDesc', type.desc);
+
+  /* ---------- 嘴替金句 ---------- */
+  setTxt('rComment', type.quote);
+
+  /* ---------- 结果标签 ---------- */
+  var badges = [
+    [ratio(count.moyu, total.moyu), '带薪摸鱼冠军', '工位生存学十级学者'],
+    [ratio(count.neihao, total.neihao), '脑内小剧场台长', '一个眼神能脑补八十集连续剧'],
+    [ratio(count.fafeng, total.fafeng), '发疯文学十级', '已掌握疯言疯语的高级语法']
   ];
-  var dims = [moyu, beiguo, fafeng, neihao, gaoqian, lianai];
-  var gotTags = TAGS.filter(function (t) { return dims[t.dim] >= t.min; })
-    .map(function (t) { return t.name; });
-  /* 保底标签 */
-  if (gotTags.length === 0) {
-    gotTags = banwei >= 50 ? ['间歇性正常'] : ['人间清醒'];
-  } else if (gotTags.length > 3) {
-    gotTags = gotTags.slice(0, 3);
-  }
-  var TAG_DESC = {
-    '摸鱼宗师': '在老板眼皮子底下完成了自己的副业',
-    '带薪拉屎大师': '厕所隔间是你的第二工位',
-    '背锅侠': '天塌下来有你顶着，功劳全是别人的',
-    '老好人预备役': '“不好意思”是你的口头禅',
-    '稳定发疯': '表面情绪稳定，内心早已炸成烟花',
-    '发疯预备役': '距离掀桌只差一次无效加班',
-    '职场丧尸': '肉体在岗，灵魂已离职',
-    '精神内耗王': '老板一个眼神，你脑补了一整季宫斗剧',
-    '人间清醒搞钱机': '每一分钱都花在刀刃上',
-    '副业卷王': '主业是副业的休息时间',
-    '办公室恋爱脑': '上班的动力来自前台的 TA',
-    '嗑糖达人': '别人的爱情，你操着亲妈的心',
-    '间歇性正常': '偶尔像个人，大部分时间是吗喽',
-    '人间清醒': '看透职场，但依然热爱生活'
-  };
+  var top = badges[0];
+  badges.forEach(function (b) { if (b[0] > top[0]) top = b; });
+  var chips = [
+    { name: type.name, desc: type.desc },
+    { name: '精神型号 ' + code, desc: '摸鱼' + LV_TXT[mL] + ' · 内耗' + LV_TXT[nL] + ' · 发疯' + LV_TXT[fL] },
+    { name: top[1], desc: top[2] }
+  ];
   var tagBox = document.getElementById('rTags');
-  gotTags.forEach(function (name, i) {
-    var chip = document.createElement('div');
-    chip.className = 'tag-chip tag-c' + (i % 3);
-    chip.innerHTML = '<b></b><span></span>';
-    chip.querySelector('b').textContent = name;
-    chip.querySelector('span').textContent = TAG_DESC[name] || '';
-    tagBox.appendChild(chip);
-  });
-
-  /* ---------- 雷达图 ---------- */
-  var canvas = document.getElementById('radar');
-  var ctx = canvas.getContext('2d');
-  var DW = 360, DH = 340;
-  var W = DW, H = DH;
-  var cx = W / 2, cy = H / 2 + 6, R = Math.min(W, H) * 0.34;
-  var N = 6;
-  var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#C6F432';
-
-  function fitRadar() {
-    var wrap = canvas.parentNode;
-    var cssW = Math.min(DW, Math.max(200, wrap.clientWidth || DW));
-    var scale = cssW / DW;
-    var dpr = window.devicePixelRatio || 1;
-    W = DW; H = DH;
-    cx = W / 2; cy = H / 2 + 6; R = Math.min(W, H) * 0.34;
-    canvas.width = Math.round(DW * scale * dpr);
-    canvas.height = Math.round(DH * scale * dpr);
-    canvas.style.width = Math.round(DW * scale) + 'px';
-    canvas.style.height = Math.round(DH * scale) + 'px';
-    ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+  if (tagBox) {
+    chips.forEach(function (c, i) {
+      var chip = document.createElement('div');
+      chip.className = 'tag-chip tag-c' + (i % 3);
+      chip.innerHTML = '<b></b><span></span>';
+      chip.querySelector('b').textContent = c.name;
+      chip.querySelector('span').textContent = c.desc;
+      tagBox.appendChild(chip);
+    });
   }
-
-  function drawRadar(values) {
-    ctx.clearRect(0, 0, W, H);
-    var angle = function (i) { return Math.PI * 2 / N * i - Math.PI / 2; };
-
-    /* 网格 */
-    for (var ring = 1; ring <= 4; ring++) {
-      ctx.beginPath();
-      for (var i = 0; i <= N; i++) {
-        var a = angle(i % N);
-        var r = R * ring / 4;
-        var x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = ring === 4 ? '#1d1d1f' : '#e3e3e0';
-      ctx.lineWidth = ring === 4 ? 2 : 1;
-      ctx.stroke();
-    }
-    /* 轴线 */
-    for (var i = 0; i < N; i++) {
-      var a = angle(i);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
-      ctx.strokeStyle = '#e3e3e0';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-    /* 数据面 */
-    ctx.beginPath();
-    for (var i = 0; i <= N; i++) {
-      var a = angle(i % N);
-      var v = Math.max(6, values[i % N]) / 100;
-      var x = cx + Math.cos(a) * R * v, y = cy + Math.sin(a) * R * v;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(198, 244, 50, 0.4)';
-    ctx.fill();
-    ctx.strokeStyle = '#1d1d1f';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-    /* 数据点 */
-    for (var i = 0; i < N; i++) {
-      var a = angle(i);
-      var v = Math.max(6, values[i]) / 100;
-      var x = cx + Math.cos(a) * R * v, y = cy + Math.sin(a) * R * v;
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#1d1d1f';
-      ctx.fill();
-    }
-    /* 维度标签 */
-    ctx.fillStyle = '#1d1d1f';
-    ctx.font = '600 13px "PingFang SC", "HarmonyOS Sans", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    for (var i = 0; i < N; i++) {
-      var a = angle(i);
-      var lx = cx + Math.cos(a) * (R + 26);
-      var ly = cy + Math.sin(a) * (R + 24);
-      ctx.fillText(DIMS[i], lx, ly);
-    }
-  }
-
-  /* 雷达图生长动画 */
-  var radarAnimated = false;
-  fitRadar();
-  function animateRadar() {
-    if (radarAnimated) return;
-    radarAnimated = true;
-    var start = null, dur = 900;
-    function step(ts) {
-      if (!start) start = ts;
-      var p = Math.min(1, (ts - start) / dur);
-      var ease = 1 - Math.pow(1 - p, 3);
-      drawRadar(score.map(function (v) { return v * ease; }));
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  var radarZone = document.querySelector('.r-radar-zone');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { animateRadar(); io.disconnect(); }
-      });
-    }, { threshold: 0.3 });
-    io.observe(radarZone);
-  } else {
-    animateRadar();
-  }
-  var resizeTimer = null;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      fitRadar();
-      drawRadar(score);
-    }, 150);
-  });
 
   /* ---------- html2canvas 海报生成（9:16 专属海报） ---------- */
   var shareBtn = document.getElementById('btnShare');
@@ -326,17 +236,17 @@
   var warmPng = null;
   svgToPngUrl('assets/result.svg').then(function (u) { warmPng = u; }).catch(function () {});
 
-  /* 海报内容：判定 + 称号 + 金句 + 数据 + 标签 + 二维码 */
+  /* 海报内容：判定 + 27 型称号 + 金句 + 三轴数据 + 型号 + 二维码 */
   function fillSharePoster(pngUrl) {
-    document.getElementById('spNo').textContent = no;
-    document.getElementById('spVerdict').textContent = verdict;
-    document.getElementById('spTitle').textContent = persona.name;
-    document.getElementById('spTitleSub').textContent = persona.sub;
-    document.getElementById('spQuote').textContent = persona.quote;
-    document.getElementById('spMoyu').textContent = pctText(moyu);
-    document.getElementById('spFafeng').textContent = fafengText(fafeng);
-    document.getElementById('spTagName').textContent = gotTags[0];
-    document.getElementById('spTagDesc').textContent = TAG_DESC[gotTags[0]] || '';
+    setTxt('spNo', no);
+    setTxt('spVerdict', verdict);
+    setTxt('spTitle', type.name);
+    setTxt('spTitleSub', 'TYPE ' + (typeIdx + 1) + ' / 27');
+    setTxt('spQuote', type.quote);
+    setTxt('spMoyu', count.moyu + '/' + total.moyu);
+    setTxt('spFafeng', count.fafeng + '/' + total.fafeng);
+    setTxt('spTagName', '精神型号 ' + code);
+    setTxt('spTagDesc', '摸鱼' + LV_TXT[mL] + ' · 内耗' + LV_TXT[nL] + ' · 发疯' + LV_TXT[fL]);
     document.getElementById('spImg').src = pngUrl;
   }
 
@@ -415,7 +325,11 @@
   });
 
   document.getElementById('btnRetry').addEventListener('click', function () {
-    try { sessionStorage.removeItem('bw_answers'); sessionStorage.removeItem('bw_nick'); } catch (e) {}
+    try {
+      sessionStorage.removeItem('bw_answers');
+      sessionStorage.removeItem('bw_quiz');
+      sessionStorage.removeItem('bw_nick');
+    } catch (e) {}
     location.href = 'quiz.html';
   });
 })();
