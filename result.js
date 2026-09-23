@@ -185,7 +185,7 @@
   setStat('statMoyu', 'barMoyu', count.moyu + '/' + total.moyu, Math.round(ratio(count.moyu, total.moyu) * 100));
   setStat('statBeiguo', 'barBeiguo', count.neihao + '/' + total.neihao, Math.round(ratio(count.neihao, total.neihao) * 100));
   setStat('statFafeng', 'barFafeng', count.fafeng + '/' + total.fafeng, Math.round(ratio(count.fafeng, total.fafeng) * 100));
-  setStat('statGongzi', 'barGongzi', String(banwei), banwei);
+  setStat('statBanwei', 'barBanwei', String(banwei), banwei);
 
   /* ---------- 精神型号（27 型主判定，可分享） ---------- */
   setTxt('rTypeName', type.name);
