@@ -496,9 +496,13 @@ a { color: inherit; text-decoration: none; }
   color: var(--ink);
   transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.12s ease;
 }
-.opt-btn:hover {
-  background: var(--accent);
-  animation: wiggle 0.35s ease-in-out;
+/* hover 仅限真正支持悬停的设备：触屏上手指点按后浏览器会保留
+   粘性 hover，下一题同位置的按钮会被误染成“选中态” */
+@media (hover: hover) and (pointer: fine) {
+  .opt-btn:hover {
+    background: var(--accent);
+    animation: wiggle 0.35s ease-in-out;
+  }
 }
 @keyframes wiggle {
   0%, 100% { transform: rotate(0); }

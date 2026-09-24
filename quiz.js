@@ -87,12 +87,16 @@
     qCard.classList.add('enter');
   }
 
+  var lock = false;
+
   function pick(opt, btn) {
+    if (lock) return;
     if (btn.classList.contains('picked')) return;
+    lock = true;
     btn.classList.add('picked');
     answers[idx] = { text: opt.text, s: opt.s };
     setTimeout(function () {
-      if (idx < total - 1) { idx++; render(); }
+      if (idx < total - 1) { idx++; render(); lock = false; }
       else { finish(); }
     }, 260);
   }
