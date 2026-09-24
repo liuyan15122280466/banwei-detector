@@ -970,7 +970,8 @@ a { color: inherit; text-decoration: none; }
 .poster-actions .btn-share { padding: 10px 30px; font-size: 15px; }
 .poster-actions .btn-retry { margin-left: 0; padding: 10px 22px; font-size: 14px; }
 
-/* 9:16 分享海报（离屏隐藏，仅用于生成图片） */
+/* 9:16 分享海报（离屏隐藏，仅用于生成图片）
+   无描边版：靠留白、字重与局部色块分层，聚焦内容本身 */
 .share-poster {
   position: fixed;
   left: -9999px;
@@ -978,8 +979,7 @@ a { color: inherit; text-decoration: none; }
   width: 540px;
   height: 960px;
   background: var(--bg);
-  border: 3px solid var(--ink);
-  padding: 34px 38px 30px;
+  padding: 40px 44px 30px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -997,50 +997,45 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 .sp-verdict {
-  margin-top: 18px;
+  margin-top: 14px;
   align-self: center;
   font-family: var(--font-title);
   font-weight: 900;
-  font-size: 24px;
+  font-size: 23px;
   letter-spacing: 2px;
   background: var(--accent);
-  border: 3px solid var(--ink);
   border-radius: 999px;
-  padding: 10px 28px;
-  box-shadow: 4px 4px 0 var(--ink);
+  padding: 10px 30px;
   white-space: nowrap;
 }
 .sp-figure {
-  margin: 18px 0 0;
-  border: 3px solid var(--ink);
+  margin: 16px 0 0;
   border-radius: 18px;
-  box-shadow: 7px 7px 0 var(--accent);
   overflow: hidden;
   background: #fff;
 }
 .sp-img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #fff;
 }
 .sp-stats {
-  margin-top: 18px;
+  margin-top: 16px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
 }
 .sp-stat {
   background: #fff;
-  border: 2.5px solid var(--ink);
   border-radius: var(--radius-sm);
-  padding: 11px 14px;
+  padding: 10px 12px;
   text-align: center;
 }
 .sp-stat-name {
   display: block;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--ink-soft);
   letter-spacing: 2px;
@@ -1050,11 +1045,11 @@ a { color: inherit; text-decoration: none; }
   margin-top: 4px;
   font-family: var(--font-title);
   font-weight: 900;
-  font-size: 26px;
+  font-size: 25px;
   letter-spacing: 1px;
 }
 .sp-tag {
-  margin-top: 18px;
+  margin-top: 16px;
   align-self: center;
   max-width: 100%;
   display: flex;
@@ -1063,10 +1058,8 @@ a { color: inherit; text-decoration: none; }
   gap: 10px;
   flex-wrap: wrap;
   background: #ffe14d;
-  border: 3px solid var(--ink);
   border-radius: 999px;
-  padding: 9px 22px;
-  box-shadow: 4px 4px 0 var(--ink);
+  padding: 9px 24px;
 }
 .sp-tag b {
   font-family: var(--font-title);
@@ -1079,22 +1072,21 @@ a { color: inherit; text-decoration: none; }
 
 /* 海报六维雷达 */
 .sp-radar {
-  margin-top: 18px;
+  margin-top: 14px;
   align-self: center;
   background: #fff;
-  border: 2.5px solid var(--ink);
   border-radius: var(--radius-sm);
-  padding: 8px;
+  padding: 6px;
 }
 .sp-radar img {
   display: block;
-  width: 250px;
+  width: 230px;
   max-width: 100%;
 }
 
 /* 海报增强：称号 + 金句 + 二维码 */
 .sp-title {
-  margin-top: 18px;
+  margin-top: 14px;
   text-align: center;
   font-family: var(--font-title);
   font-weight: 900;
@@ -1111,18 +1103,16 @@ a { color: inherit; text-decoration: none; }
   color: var(--ink-soft);
 }
 .sp-quote {
-  margin-top: 14px;
+  margin-top: 12px;
   align-self: center;
   max-width: 100%;
   background: #fff;
-  border: 2.5px solid var(--ink);
   border-radius: 14px;
-  padding: 10px 16px;
+  padding: 10px 18px;
   font-size: 13.5px;
   font-weight: 600;
   line-height: 1.6;
   text-align: center;
-  box-shadow: 4px 4px 0 var(--accent);
 }
 .sp-foot {
   margin-top: auto;
@@ -1146,7 +1136,6 @@ a { color: inherit; text-decoration: none; }
   width: 54px;
   height: 54px;
   display: block;
-  border: 2px solid var(--ink);
   border-radius: 8px;
   background: #fff;
 }

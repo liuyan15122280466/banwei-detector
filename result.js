@@ -118,12 +118,46 @@
   var type = TYPES[mL][nL][fL];
   var code = '鱼' + LV_TXT[mL] + '·耗' + LV_TXT[nL] + '·疯' + LV_TXT[fL];
 
-  /* ---------- 班味指数：三轴占比加权，映射到 8~96 ---------- */
+  /* ---------- 班味指数：逐题累加选项原始分 + min-max 归一化 ----------
+     旧版按“三轴 argmax 命中率平均”算，但三轴互斥、此消彼长，
+     平均值永远挤在 0.4 附近 → 指数永远 40~60 → 永远“中度感染”。
+     新版：内耗/发疯分把班味熏浓（相对每题“最淡~最浓”区间归一），
+     摸鱼分把班味冲淡（作扣减项）——语义正确，5 个等级全部可达 */
   function ratio(c, t) { return t > 0 ? c / t : 0; }
-  var weighted = ratio(count.moyu, total.moyu) * 0.34 +
-                 ratio(count.neihao, total.neihao) * 0.33 +
-                 ratio(count.fafeng, total.fafeng) * 0.33;
-  var banwei = Math.max(5, Math.min(98, Math.round(8 + weighted * 88)));
+  var raw = { neihao: 0, fafeng: 0, moyu: 0 };
+  var capSum = 0;   /* 每题最浓组合之和（内耗+发疯可达上限） */
+  var minSum = 0;   /* 每题最淡组合之和（内耗+发疯可达下限） */
+  var capMoyu = 0;  /* 每题摸鱼分的可达上限 */
+  answers.forEach(function (a, i) {
+    if (!a || !Array.isArray(a.s) || a.s.length < 3) return;
+    raw.neihao += a.s[1];
+    raw.fafeng += a.s[2];
+    raw.moyu += a.s[0];
+    var opts = (quiz[i] && quiz[i].options) || null;
+    if (opts && opts.length) {
+      var mx = 0, mn = 99, mm = 0;
+      opts.forEach(function (o) {
+        if (!o || !Array.isArray(o.s) || o.s.length < 3) return;
+        mx = Math.max(mx, o.s[1] + o.s[2]);
+        mn = Math.min(mn, o.s[1] + o.s[2]);
+        mm = Math.max(mm, o.s[0]);
+      });
+      capSum += mx || 18;
+      minSum += mn < 99 ? mn : 5;
+      capMoyu += mm || 9;
+    } else {
+      capSum += 18; /* 演示兜底数据没有 options，用题库典型上下限 */
+      minSum += 5;
+      capMoyu += 9;
+    }
+  });
+  var nf = Math.max(0, raw.neihao + raw.fafeng - minSum);
+  var nfSpan = Math.max(1, capSum - minSum);
+  var banwei = Math.round(
+    nf / nfSpan * 95 -
+    (raw.moyu / Math.max(1, capMoyu)) * 15 + 12
+  );
+  banwei = Math.max(3, Math.min(98, banwei));
 
   /* ---------- 六维图鉴：逐题累加选项里的真实分值 ----------
      旧版雷达按“argmax 命中数”画图，每轴只有 0/1 计数，形状几乎不动；
@@ -383,6 +417,7 @@
     setTxt('spQuote', type.quote);
     setTxt('spMoyu', count.moyu + '/' + total.moyu);
     setTxt('spFafeng', count.fafeng + '/' + total.fafeng);
+    setTxt('spBanwei', String(banwei));
     setTxt('spTagName', '精神型号 ' + code);
     setTxt('spTagDesc', '摸鱼' + LV_TXT[mL] + ' · 内耗' + LV_TXT[nL] + ' · 发疯' + LV_TXT[fL]);
     document.getElementById('spImg').src = pngUrl;
