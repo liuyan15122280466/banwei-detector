@@ -376,6 +376,7 @@
   var posterImg = document.getElementById('posterImg');
   var tip = document.getElementById('shareTip');
   var generating = false;
+  var lastPosterBlob = null;
 
   /* SVG 插画转 PNG data URL（html2canvas 无法直接渲染外部 SVG） */
   function svgToPngUrl(url) {
@@ -484,7 +485,8 @@
         posterImg.src = data;
         document.getElementById('posterDownload').href = data;
         modal.hidden = false;
-        tip.textContent = '长按保存海报图片，收获打工人共鸣';
+        tip.textContent = '点「保存图片」存入相册/本地，或长按图片保存';
+        out.toBlob(function (blob) { lastPosterBlob = blob; }, 'image/png');
       })
       .catch(function (err) {
         console.error(err);
@@ -494,6 +496,42 @@
         generating = false;
         shareBtn.classList.remove('loading');
       });
+  });
+
+  /* 保存图片：手机调系统分享面板（可直接存相册），电脑走真实文件下载，
+     微信内置浏览器不支持两者，提示长按图片保存 */
+  document.getElementById('posterDownload').addEventListener('click', function (e) {
+    var ua = navigator.userAgent || '';
+    var isWeChat = /MicroMessenger/i.test(ua);
+    if (isWeChat) {
+      e.preventDefault();
+      tip.textContent = '微信内无法直接下载：请长按上方海报图片 →「保存图片」';
+      return;
+    }
+    if (!lastPosterBlob) return; /* 海报还没生成完，让浏览器走默认 href 下载 */
+    e.preventDefault();
+    var fname = '班味浓度报告.png';
+
+    /* 手机：调起系统分享面板，iOS/安卓均可「存储到相册」 */
+    var nav = navigator;
+    var canShareFiles = nav.canShare && nav.canShare({ files: [] });
+    if (canShareFiles && nav.share) {
+      var file = new File([lastPosterBlob], fname, { type: 'image/png' });
+      nav.share({ files: [file], title: '我的班味浓度报告' })
+        .catch(function () {}); /* 用户取消分享不算错误 */
+      return;
+    }
+
+    /* 桌面：Blob URL 触发真实下载（data: URL 过长会被 Safari 拒绝） */
+    var url = URL.createObjectURL(lastPosterBlob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    tip.textContent = '已开始下载「班味浓度报告.png」';
   });
 
   document.getElementById('posterClose').addEventListener('click', function () {
