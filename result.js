@@ -412,7 +412,8 @@
   /* 海报内容：判定 + 27 型称号 + 金句 + 三轴数据 + 型号 + 二维码 */
   function fillSharePoster(pngUrl) {
     setTxt('spNo', no);
-    setTxt('spVerdict', verdict);
+    var sv = document.getElementById('spVerdict');
+    if (sv) sv.innerHTML = '<span>' + verdict + '</span>';
     setTxt('spTitle', type.name);
     setTxt('spTitleSub', 'TYPE ' + (typeIdx + 1) + ' / 27');
     setTxt('spQuote', type.quote);
@@ -453,6 +454,7 @@
     tip.textContent = '海报生成中，请稍候…';
 
     var poster = document.getElementById('sharePoster');
+    poster.classList.add('poster-render');
     var usePng = warmPng;
     var prep = usePng
       ? Promise.resolve(usePng)
@@ -493,6 +495,7 @@
         tip.textContent = '生成失败，请重试或截图保存';
       })
       .finally(function () {
+        poster.classList.remove('poster-render');
         generating = false;
         shareBtn.classList.remove('loading');
       });
