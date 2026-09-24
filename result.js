@@ -223,7 +223,7 @@
 
   /* ---------- 精神型号（27 型主判定，可分享） ---------- */
   setTxt('rTypeName', type.name);
-  setTxt('rTypeCode', '精神型号 ' + code + ' · 27 型之 ' + (typeIdx + 1));
+  setTxt('rTypeCode', code + ' · 27 型之 ' + (typeIdx + 1));
   setTxt('rTypeDesc', type.desc);
 
   /* ---------- 嘴替金句 ---------- */
