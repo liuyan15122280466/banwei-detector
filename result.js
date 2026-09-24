@@ -239,7 +239,7 @@
   badges.forEach(function (b) { if (b[0] > top[0]) top = b; });
   var chips = [
     { name: type.name, desc: type.desc },
-    { name: '精神型号 ' + code, desc: '摸鱼' + LV_TXT[mL] + ' · 内耗' + LV_TXT[nL] + ' · 发疯' + LV_TXT[fL] },
+    { name: '精神型号', desc: code },
     { name: top[1], desc: top[2] }
   ];
   var tagBox = document.getElementById('rTags');

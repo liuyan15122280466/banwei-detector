@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>班味浓度报告 · 班味检测仪</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body class="page-result">
 
@@ -20,9 +20,6 @@
   </header>
 
   <section class="r-hero">
-    <figure class="r-figure">
-      <img src="assets/result.svg" alt="打工狗瘫在电脑前的插画" class="r-img" id="resultImg" draggable="false">
-    </figure>
     <h1 class="r-title">班味浓度报告</h1>
     <p class="r-subtitle">当前打工人：<b id="userNick">无名打工狗</b></p>
     <div class="r-verdict" id="verdictChip">检测完成</div>
@@ -52,6 +49,10 @@
         <b class="stat-val" id="statBanwei">--</b>
       </div>
     </div>
+    <h3 class="r-sub-title"><i class="title-tick"></i>六维图鉴</h3>
+    <div class="radar-wrap">
+      <canvas id="radar" width="360" height="340" aria-label="六维图鉴雷达图"></canvas>
+    </div>
   </section>
 
   <section class="r-section" aria-label="你的精神型号">
@@ -67,13 +68,6 @@
   <section class="r-section" aria-label="鉴定标签">
     <h2 class="r-block-title"><i class="title-tick"></i>鉴定标签</h2>
     <div class="r-tags" id="rTags"></div>
-  </section>
-
-  <section class="r-section" aria-label="六维图鉴">
-    <h2 class="r-block-title"><i class="title-tick"></i>六维图鉴</h2>
-    <div class="radar-wrap">
-      <canvas id="radar" width="360" height="340" aria-label="六维图鉴雷达图"></canvas>
-    </div>
   </section>
 
   <footer class="r-footer">
@@ -159,6 +153,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="assets/qrcode.min.js"></script>
-<script src="result.js?v=13"></script>
+<script src="result.js?v=14"></script>
 </body>
 </html>
