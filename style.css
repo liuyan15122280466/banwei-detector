@@ -712,7 +712,7 @@ a { color: inherit; text-decoration: none; }
 
 /* 核心数据仪表（去底，2×2 网格，透明轨道） */
 .r-grid {
-  margin-top: 10px;
+  margin-top: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 24px;
