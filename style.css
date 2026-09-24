@@ -772,17 +772,6 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 8px;
 }
-.r-sub-title {
-  margin-top: 14px;
-  font-family: var(--font-title);
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 1.5px;
-  color: var(--ink-soft);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
 .r-sub-title .title-tick { width: 8px; height: 8px; }
 .r-comment {
   margin-top: 10px;
@@ -801,7 +790,7 @@ a { color: inherit; text-decoration: none; }
 
 /* 六维图鉴：雷达区（无底色，限宽紧凑） */
 .radar-wrap {
-  margin-top: 8px;
+  margin-top: 14px;
   display: flex;
   justify-content: center;
   padding: 0;
