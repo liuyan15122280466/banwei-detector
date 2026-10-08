@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="打工狗在工位摸鱼刷手机心里放假">
+  <defs>
+    <clipPath id="frame1"><rect x="0" y="0" width="800" height="600"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame1)">
+    <!-- 背景 -->
+    <rect width="800" height="600" fill="#ffffff"/>
+    <circle cx="400" cy="300" r="220" fill="#f6f6f2"/>
+    <circle cx="400" cy="300" r="220" fill="none" stroke="#1d1d1f" stroke-width="3"/>
+
+    <!-- 左侧显示器（活儿还没干完，但先不管） -->
+    <g>
+      <rect x="210" y="210" width="150" height="100" rx="10" fill="#1d1d1f"/>
+      <rect x="222" y="222" width="126" height="76" rx="5" fill="#2a2a2c"/>
+      <rect x="234" y="234" width="58" height="7" rx="3.5" fill="#4a4a4c"/>
+      <rect x="234" y="250" width="100" height="7" rx="3.5" fill="#4a4a4c"/>
+      <rect x="234" y="266" width="88" height="7" rx="3.5" fill="#4a4a4c"/>
+      <rect x="234" y="282" width="72" height="7" rx="3.5" fill="#4a4a4c"/>
+      <rect x="274" y="310" width="22" height="12" fill="#1d1d1f"/>
+      <rect x="252" y="322" width="66" height="8" rx="4" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 办公椅 -->
+    <g>
+      <rect x="302" y="350" width="20" height="104" rx="10" fill="#1d1d1f"/>
+      <rect x="296" y="452" width="150" height="18" rx="9" fill="#1d1d1f"/>
+      <rect x="364" y="470" width="14" height="52" fill="#1d1d1f"/>
+      <line x1="330" y1="532" x2="416" y2="532" stroke="#1d1d1f" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="330" cy="542" r="8" fill="#1d1d1f"/>
+      <circle cx="416" cy="542" r="8" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 摸鱼中的打工狗（侧身刷手机，心情美丽） -->
+    <g>
+      <!-- 翘起的尾巴 + 摇摆线 -->
+      <path d="M326 414 q-36 -16 -32 -46" stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="292" cy="366" rx="11" ry="9" fill="#ffffff" stroke="#1d1d1f" stroke-width="4" transform="rotate(-50 292 366)"/>
+      <g stroke="#1d1d1f" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6">
+        <path d="M270 386 q-10 2 -16 10"/>
+        <path d="M276 402 q-10 4 -14 12"/>
+      </g>
+      <!-- 身体 -->
+      <ellipse cx="398" cy="398" rx="84" ry="70" fill="#e8a94e" stroke="#1d1d1f" stroke-width="5"/>
+      <!-- 头（侧转，看得见笑） -->
+      <circle cx="470" cy="324" r="50" fill="#e8a94e" stroke="#1d1d1f" stroke-width="5"/>
+      <path d="M436 292 q-8 -38 20 -46 q18 8 14 42 z" fill="#8a5a22" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M484 314 q11 -11 21 0" stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M492 342 q10 9 19 -1" stroke="#1d1d1f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <!-- 举手机的手 -->
+      <path d="M420 382 Q468 356 506 330" stroke="#1d1d1f" stroke-width="21" fill="none" stroke-linecap="round"/>
+      <path d="M420 382 Q468 356 506 330" stroke="#e8a94e" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <circle cx="512" cy="326" r="13" fill="#e8a94e" stroke="#1d1d1f" stroke-width="4.5"/>
+      <!-- 手机 -->
+      <rect x="494" y="260" width="38" height="60" rx="8" fill="#1d1d1f" stroke="#1d1d1f" stroke-width="4"/>
+      <rect x="501" y="269" width="24" height="36" rx="3" fill="#c6f432"/>
+      <g stroke="#1d1d1f" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5">
+        <path d="M494 282 q-14 4 -20 14"/>
+        <path d="M494 300 q-12 6 -16 16"/>
+      </g>
+    </g>
+
+    <!-- 哼歌的音符 -->
+    <g font-family="Arial, sans-serif" font-weight="700" fill="#1d1d1f">
+      <text x="560" y="238" font-size="26" transform="rotate(10 560 238)" opacity="0.85">♪</text>
+      <text x="596" y="292" font-size="20" transform="rotate(-8 596 292)" opacity="0.6">♫</text>
+    </g>
+
+    <!-- 地上的奶茶（插好吸管） -->
+    <g>
+      <rect x="540" y="522" width="36" height="44" rx="7" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+      <line x1="540" y1="532" x2="576" y2="532" stroke="#1d1d1f" stroke-width="3.5"/>
+      <line x1="556" y1="522" x2="566" y2="494" stroke="#1d1d1f" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="550" cy="554" r="3.5" fill="#1d1d1f"/>
+      <circle cx="559" cy="557" r="3.5" fill="#1d1d1f"/>
+      <circle cx="568" cy="554" r="3.5" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 地面线 -->
+    <line x1="180" y1="568" x2="620" y2="568" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 顶部标语牌 -->
+    <g transform="rotate(-2 400 40)">
+      <rect x="280" y="22" width="240" height="34" rx="17" fill="#c6f432" stroke="#1d1d1f" stroke-width="3.5"/>
+      <text x="400" y="46" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="19" font-weight="800" fill="#1d1d1f">人在工位 · 心在放假</text>
+    </g>
+
+    <!-- 漂浮词 -->
+    <g font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-weight="800" fill="#1d1d1f">
+      <text x="632" y="205" font-size="15" transform="rotate(8 632 205)" opacity="0.7">带薪喝水</text>
+      <text x="646" y="252" font-size="16" transform="rotate(-6 646 252)" opacity="0.85">下午茶</text>
+      <text x="168" y="178" font-size="16" transform="rotate(-8 168 178)" opacity="0.85">摸鱼</text>
+      <text x="150" y="205" font-size="15" transform="rotate(6 150 205)" opacity="0.7">假期计划</text>
+    </g>
+  </g>
+</svg>

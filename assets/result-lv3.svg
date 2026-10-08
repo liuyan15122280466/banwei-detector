@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="打工狗深夜爆肝咖啡续命">
+  <defs>
+    <clipPath id="frame3"><rect x="0" y="0" width="800" height="600"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame3)">
+    <!-- 背景 -->
+    <rect width="800" height="600" fill="#ffffff"/>
+    <circle cx="400" cy="300" r="220" fill="#f6f6f2"/>
+    <circle cx="400" cy="300" r="220" fill="none" stroke="#1d1d1f" stroke-width="3"/>
+
+    <!-- 夜深了：月牙 + 星星 + 凌晨两点挂钟 -->
+    <path d="M300 96 A46 46 0 1 0 342 160 A40 40 0 1 1 300 96 Z" fill="#c6f432" stroke="#1d1d1f" stroke-width="4" stroke-linejoin="round"/>
+    <g fill="#1d1d1f">
+      <path d="M388 108 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 z"/>
+      <path d="M208 210 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z"/>
+      <path d="M540 150 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z"/>
+    </g>
+    <g>
+      <circle cx="545" cy="175" r="30" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+      <line x1="545" y1="175" x2="545" y2="153" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"/>
+      <line x1="545" y1="175" x2="559" y2="167" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="545" cy="175" r="3" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 显示器（密密麻麻的活） -->
+    <g>
+      <rect x="316" y="150" width="168" height="120" rx="12" fill="#1d1d1f"/>
+      <rect x="330" y="164" width="140" height="92" rx="6" fill="#2a2a2c"/>
+      <rect x="342" y="178" width="64" height="8" rx="4" fill="#c6f432"/>
+      <rect x="342" y="196" width="116" height="5" rx="2.5" fill="#4a4a4c"/>
+      <rect x="342" y="208" width="108" height="5" rx="2.5" fill="#4a4a4c"/>
+      <rect x="342" y="220" width="116" height="5" rx="2.5" fill="#4a4a4c"/>
+      <rect x="342" y="232" width="96" height="5" rx="2.5" fill="#4a4a4c"/>
+      <rect x="384" y="270" width="32" height="14" fill="#1d1d1f"/>
+      <rect x="362" y="284" width="76" height="8" rx="4" fill="#1d1d1f"/>
+    </g>
+
+    <!-- 屏幕光照射效果 -->
+    <path d="M340 288 L300 420 L500 420 L460 288 Z" fill="#f6f6f2" opacity="0.9"/>
+
+    <!-- 打工狗背影（熬夜熬蔫了） -->
+    <g>
+      <ellipse cx="400" cy="392" rx="96" ry="76" fill="#e8a94e" stroke="#1d1d1f" stroke-width="5"/>
+      <path d="M330 344 q-16 -40 8 -58 q22 10 24 44 z" fill="#8a5a22" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M470 344 q16 -40 -8 -58 q-22 10 -24 44 z" fill="#8a5a22" stroke="#1d1d1f" stroke-width="5" stroke-linejoin="round"/>
+      <!-- 凌乱的头发 -->
+      <g stroke="#1d1d1f" stroke-width="4" fill="none" stroke-linecap="round">
+        <path d="M368 296 q-8 -18 -20 -22"/>
+        <path d="M400 290 q0 -20 -8 -30"/>
+        <path d="M432 296 q10 -16 22 -20"/>
+      </g>
+      <!-- 尾巴无力下垂 -->
+      <path d="M492 420 q34 6 40 34" stroke="#1d1d1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="534" cy="458" rx="12" ry="9" fill="#ffffff" stroke="#1d1d1f" stroke-width="4" transform="rotate(40 534 458)"/>
+      <!-- 困到打瞌睡 -->
+      <text x="322" y="268" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#1d1d1f" transform="rotate(-12 322 268)">zzz</text>
+    </g>
+
+    <!-- 桌面 -->
+    <rect x="216" y="468" width="368" height="20" rx="10" fill="#1d1d1f"/>
+    <rect x="252" y="488" width="18" height="80" fill="#1d1d1f"/>
+    <rect x="530" y="488" width="18" height="80" fill="#1d1d1f"/>
+
+    <!-- 键盘（桌上） -->
+    <g>
+      <rect x="330" y="440" width="120" height="26" rx="6" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+      <g stroke="#1d1d1f" stroke-width="2.5">
+        <line x1="342" y1="448" x2="438" y2="448"/>
+        <line x1="342" y1="456" x2="438" y2="456"/>
+      </g>
+    </g>
+
+    <!-- 咖啡续命三连杯 -->
+    <g>
+      <g>
+        <rect x="466" y="428" width="34" height="40" rx="7" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+        <path d="M500 438 q14 8 0 20" stroke="#1d1d1f" stroke-width="4" fill="none"/>
+        <path d="M474 418 q4 -10 0 -16 M484 418 q4 -10 0 -16" stroke="#d9d9d4" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <g>
+        <rect x="510" y="428" width="34" height="40" rx="7" fill="#c6f432" stroke="#1d1d1f" stroke-width="4"/>
+        <path d="M544 438 q14 8 0 20" stroke="#1d1d1f" stroke-width="4" fill="none"/>
+        <path d="M518 418 q4 -10 0 -16 M528 418 q4 -10 0 -16" stroke="#d9d9d4" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <g>
+        <rect x="544" y="428" width="34" height="40" rx="7" fill="#ffffff" stroke="#1d1d1f" stroke-width="4"/>
+        <path d="M578 438 q14 8 0 20" stroke="#1d1d1f" stroke-width="4" fill="none"/>
+        <path d="M552 418 q4 -10 0 -16 M562 418 q4 -10 0 -16" stroke="#d9d9d4" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- 地面线 -->
+    <line x1="180" y1="568" x2="620" y2="568" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 顶部标语牌 -->
+    <g transform="rotate(2 400 40)">
+      <rect x="280" y="22" width="240" height="34" rx="17" fill="#c6f432" stroke="#1d1d1f" stroke-width="3.5"/>
+      <text x="400" y="46" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="19" font-weight="800" fill="#1d1d1f">深夜爆肝 · 咖啡续命</text>
+    </g>
+
+    <!-- 漂浮词 -->
+    <g font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-weight="800" fill="#1d1d1f">
+      <text x="168" y="225" font-size="15" transform="rotate(-8 168 225)" opacity="0.7">改需求</text>
+      <text x="148" y="268" font-size="16" transform="rotate(6 148 268)" opacity="0.85">凌晨2点</text>
+      <text x="636" y="290" font-size="15" transform="rotate(8 636 290)" opacity="0.7">复盘</text>
+      <text x="648" y="330" font-size="16" transform="rotate(-6 648 330)" opacity="0.85">甲方</text>
+    </g>
+  </g>
+</svg>

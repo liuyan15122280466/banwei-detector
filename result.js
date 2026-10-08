@@ -200,13 +200,13 @@
   setTxt('reportNo', no);
   setTxt('userNick', nick);
 
-  /* ---------- 判定词 ---------- */
-  var verdict;
-  if (banwei >= 80) verdict = '班味浓度：爆表级 ☢️';
-  else if (banwei >= 60) verdict = '班味浓度：重度超标';
-  else if (banwei >= 40) verdict = '班味浓度：中度感染';
-  else if (banwei >= 20) verdict = '班味浓度：轻度携带';
-  else verdict = '班味浓度：几乎没味？';
+  /* ---------- 判定词（artTier 同时决定海报用哪一档插画） ---------- */
+  var verdict, artTier;
+  if (banwei >= 80) { verdict = '班味浓度：爆表级 ☢️'; artTier = 4; }
+  else if (banwei >= 60) { verdict = '班味浓度：重度超标'; artTier = 3; }
+  else if (banwei >= 40) { verdict = '班味浓度：中度感染'; artTier = 2; }
+  else if (banwei >= 20) { verdict = '班味浓度：轻度携带'; artTier = 1; }
+  else { verdict = '班味浓度：几乎没味？'; artTier = 0; }
   setTxt('verdictChip', verdict);
 
   /* ---------- 四宫格：三轴计数 + 班味指数 ---------- */
@@ -427,9 +427,18 @@
     if (hint) hint.textContent = msg;
   }
 
-  /* 页面加载时预转换插画，点击生成时无需等待 */
-  var warmPng = null;
-  svgToPngUrl('assets/result.svg').then(function (u) { warmPng = u; }).catch(function () {});
+  /* 五档插画：下标即 artTier；页面加载时全部预转换，点击生成时无需等待 */
+  var ART_SVGS = [
+    'assets/result-lv0.svg',
+    'assets/result-lv1.svg',
+    'assets/result.svg',
+    'assets/result-lv3.svg',
+    'assets/result-lv4.svg'
+  ];
+  var warmPngs = {};
+  ART_SVGS.forEach(function (u) {
+    svgToPngUrl(u).then(function (p) { warmPngs[u] = p; }).catch(function () {});
+  });
 
   /* 海报内容：判定 + 27 型称号 + 金句 + 三轴数据 + 型号 + 二维码 */
   function fillSharePoster(pngUrl) {
@@ -477,10 +486,11 @@
 
     var poster = document.getElementById('sharePoster');
     poster.classList.add('poster-render');
-    var usePng = warmPng;
+    var artUrl = ART_SVGS[artTier] || ART_SVGS[2];
+    var usePng = warmPngs[artUrl];
     var prep = usePng
       ? Promise.resolve(usePng)
-      : svgToPngUrl('assets/result.svg');
+      : svgToPngUrl(artUrl);
     prep
       .then(function (pngUrl) {
         fillSharePoster(pngUrl);
