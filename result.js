@@ -405,6 +405,28 @@
     });
   }
 
+  /* data URL 同步转 Blob（toBlob 是异步的，弹窗秒开时 blob 尚未就绪会导致保存失效） */
+  function dataUrlToBlob(dataUrl) {
+    var parts = dataUrl.split(',');
+    var mime = (parts[0].match(/:(.*?);/) || [])[1] || 'image/png';
+    var bin = atob(parts[1]);
+    var arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  /* 平台判定：保存策略按环境走不同路径 */
+  var ua = navigator.userAgent || '';
+  var isWeChat = /MicroMessenger/i.test(ua);
+  var isIOS = /iP(hone|ad|od)/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var nav = navigator;
+
+  function shareText(msg) {
+    tip.textContent = msg;
+    var hint = document.getElementById('posterHint');
+    if (hint) hint.textContent = msg;
+  }
+
   /* 页面加载时预转换插画，点击生成时无需等待 */
   var warmPng = null;
   svgToPngUrl('assets/result.svg').then(function (u) { warmPng = u; }).catch(function () {});
@@ -486,9 +508,17 @@
         var data = out.toDataURL('image/png');
         posterImg.src = data;
         document.getElementById('posterDownload').href = data;
+        lastPosterBlob = dataUrlToBlob(data); /* 同步就绪，弹窗秒开也能立即保存 */
         modal.hidden = false;
-        tip.textContent = '点「保存图片」存入相册/本地，或长按图片保存';
-        out.toBlob(function (blob) { lastPosterBlob = blob; }, 'image/png');
+        if (isWeChat) {
+          shareText('长按上方海报图片 → 点「保存图片」即可存入相册');
+        } else if (isIOS) {
+          shareText('点「保存图片」→ 在分享面板选「存储图像」；也可长按图片保存');
+        } else if (/Android/i.test(ua)) {
+          shareText('点「保存图片」，图片将保存到手机（可在相册查看）');
+        } else {
+          shareText('点「保存图片」，海报将下载到电脑');
+        }
       })
       .catch(function (err) {
         console.error(err);
@@ -501,40 +531,43 @@
       });
   });
 
-  /* 保存图片：手机调系统分享面板（可直接存相册），电脑走真实文件下载，
-     微信内置浏览器不支持两者，提示长按图片保存 */
+  /* 保存图片：iOS 走系统分享面板（面板里有「存储图像」直接进相册），
+     安卓/电脑走真实文件下载（安卓下载即入相册），微信只能长按图片保存 */
   document.getElementById('posterDownload').addEventListener('click', function (e) {
-    var ua = navigator.userAgent || '';
-    var isWeChat = /MicroMessenger/i.test(ua);
     if (isWeChat) {
       e.preventDefault();
-      tip.textContent = '微信内无法直接下载：请长按上方海报图片 →「保存图片」';
+      shareText('微信内无法直接下载：请长按上方海报图片 →「保存图片」');
       return;
     }
-    if (!lastPosterBlob) return; /* 海报还没生成完，让浏览器走默认 href 下载 */
+    if (!lastPosterBlob) return; /* 兜底：blob 未就绪时走默认 href 下载 */
     e.preventDefault();
     var fname = '班味浓度报告.png';
 
-    /* 手机：调起系统分享面板，iOS/安卓均可「存储到相册」 */
-    var nav = navigator;
+    /* 安卓/电脑：Blob URL 触发真实下载 */
+    function downloadBlob() {
+      var url = URL.createObjectURL(lastPosterBlob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      shareText('已保存「班味浓度报告.png」，可在相册/下载目录查看');
+    }
+
+    /* iPhone：调起系统分享面板，点「存储图像」直接进相册 */
     var canShareFiles = nav.canShare && nav.canShare({ files: [] });
-    if (canShareFiles && nav.share) {
+    if (isIOS && canShareFiles && nav.share) {
       var file = new File([lastPosterBlob], fname, { type: 'image/png' });
-      nav.share({ files: [file], title: '我的班味浓度报告' })
-        .catch(function () {}); /* 用户取消分享不算错误 */
+      nav.share({ files: [file], title: '我的班味浓度报告' }).catch(function (err) {
+        if (err && err.name === 'AbortError') return; /* 用户取消分享不算错误 */
+        shareText('分享面板调起失败：请长按上方海报图片 →「存储图像」');
+      });
       return;
     }
 
-    /* 桌面：Blob URL 触发真实下载（data: URL 过长会被 Safari 拒绝） */
-    var url = URL.createObjectURL(lastPosterBlob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = fname;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-    tip.textContent = '已开始下载「班味浓度报告.png」';
+    downloadBlob();
   });
 
   document.getElementById('posterClose').addEventListener('click', function () {
